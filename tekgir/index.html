@@ -396,22 +396,16 @@
             <div class="logo">
                 Solo<span>Bet</span>
             </div>
-            <h2 style="margin-bottom: 20px; color: #2C3E50;">Admin Girişi</h2>
-            
-            <div class="credentials-info">
-                <strong>Giriş Bilgileri:</strong><br>
-                Kullanıcı: <code>admin</code><br>
-                Şifre: <code>123456</code>
-            </div>
+            <h2 style="margin-bottom: 30px; color: #2C3E50;">Admin Girişi</h2>
             
             <form id="loginForm">
                 <div class="form-group">
                     <label class="form-label">Kullanıcı Adı</label>
-                    <input type="text" class="form-input" id="username" value="admin" required>
+                    <input type="text" class="form-input" id="username" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Şifre</label>
-                    <input type="password" class="form-input" id="password" value="123456" required>
+                    <input type="password" class="form-input" id="password" required>
                 </div>
                 <button type="submit" class="btn-login">
                     🔐 Giriş Yap
@@ -480,7 +474,7 @@
                     <form id="addUrlForm">
                         <div class="form-group">
                             <label class="form-label">URL Adresi</label>
-                            <input type="text" class="form-input" id="newUrl" placeholder="örn: solobet1234.com" required>
+                            <input type="text" class="form-input" id="newUrl" placeholder="örn: sahabet1234.com" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Durum</label>
@@ -540,13 +534,13 @@
     <script>
         // Firebase Configuration - BU KISMI DEĞİŞTİRİN
         const firebaseConfig = {
-            apiKey: "AIzaSyAZMVzxhne-YlyJXUAejuVih0DkcWRUrys",
-            authDomain: "solobet-web.firebaseapp.com",
-            databaseURL: "https://solobet-web-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "solobet-web",
-            storageBucket: "solobet-web.firebasestorage.app",
-            messagingSenderId: "906482566805",
-            appId: "1:906482566805:web:6281cd46dde014b427fd9c"
+            apiKey: "BURAYA_KENDI_API_KEY_NİZİ_YAZIN",
+            authDomain: "BURAYA_KENDI_DOMAIN_NİZİ_YAZIN",
+            databaseURL: "BURAYA_KENDI_DATABASE_URL_NİZİ_YAZIN",
+            projectId: "BURAYA_KENDI_PROJECT_ID_NİZİ_YAZIN",
+            storageBucket: "BURAYA_KENDI_STORAGE_BUCKET_NİZİ_YAZIN",
+            messagingSenderId: "BURAYA_KENDI_SENDER_ID_NİZİ_YAZIN",
+            appId: "BURAYA_KENDI_APP_ID_NİZİ_YAZIN"
         };
 
         // Initialize Firebase
@@ -557,7 +551,7 @@
 
         // Basit giriş kontrolü
         const validCredentials = {
-            'admin': '123456'
+            'admin': 'admin3169'
         };
 
         // Login form
