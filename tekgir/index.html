@@ -8,7 +8,6 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     
     <style>
         * {
@@ -148,11 +147,6 @@
             box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #3498DB, #2980B9);
-            color: white;
-        }
-        
         .btn-success {
             background: linear-gradient(135deg, #27AE60, #2ECC71);
             color: white;
@@ -234,7 +228,6 @@
             border-radius: 10px;
             margin-bottom: 10px;
             background: #F8F9FA;
-            position: relative;
         }
         
         .url-info {
@@ -369,39 +362,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        /* Bildirim Paneli */
-        .notification-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .notification-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 15px;
-            align-items: end;
-        }
-        
-        /* Drag & Drop */
-        .url-item.dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
-        }
-        
-        .drag-handle {
-            cursor: move;
-            color: #BDC3C7;
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .drag-handle:hover {
-            color: #7F8C8D;
-        }
-        
         @media (max-width: 768px) {
             .admin-grid {
                 grid-template-columns: 1fr;
@@ -423,10 +383,6 @@
                 justify-content: center;
             }
             
-            .notification-form {
-                grid-template-columns: 1fr;
-            }
-            
             .action-buttons {
                 grid-template-columns: 1fr;
             }
@@ -443,7 +399,7 @@
             <h2 style="margin-bottom: 20px; color: #2C3E50;">Admin Girişi</h2>
             
             <div class="credentials-info">
-                <strong>Test Giriş Bilgileri:</strong><br>
+                <strong>Giriş Bilgileri:</strong><br>
                 Kullanıcı: <code>admin</code><br>
                 Şifre: <code>123456</code>
             </div>
@@ -501,13 +457,10 @@
             <div class="quick-actions">
                 <h3 class="card-title">⚡ Hızlı Aksiyonlar</h3>
                 <div class="action-buttons">
-                    <button class="action-btn btn-success" onclick="showAddUrlModal()">
-                        ➕ Yeni URL Ekle
-                    </button>
-                    <button class="action-btn btn-warning" onclick="activateNextUrl()">
+                    <button class="action-btn btn-success" onclick="activateNextUrl()">
                         🔄 Sıradaki URL'yi Aktif Et
                     </button>
-                    <button class="action-btn btn-primary" onclick="sendTestNotification()">
+                    <button class="action-btn btn-warning" onclick="sendTestNotification()">
                         📤 Test Bildirimi Gönder
                     </button>
                     <button class="action-btn btn-danger" onclick="deactivateAllUrls()">
@@ -575,7 +528,7 @@
                             <label class="form-label">Mesaj</label>
                             <input type="text" class="form-input" id="notifMessage" placeholder="Bildirim mesajı">
                         </div>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-success">
                             📤 Gönder
                         </button>
                     </form>
@@ -585,16 +538,15 @@
     </div>
 
     <script>
-        // Firebase Configuration
+        // Firebase Configuration - BU KISMI DEĞİŞTİRİN
         const firebaseConfig = {
-            apiKey: "AIzaSyBGCbLgFY5u7TUs7njM2PAqUyRTCQuIx6E",
-            authDomain: "guncelsolobet.firebaseapp.com",
-            databaseURL: "https://guncelsolobet-default-rtdb.europe-west1.firebasedatabase.app/",
-            projectId: "guncelsolobet",
-            storageBucket: "guncelsolobet.firebasestorage.app",
-            messagingSenderId: "282558930683",
-            appId: "1:282558930683:web:80751459579a9c31d15a5e",
-            measurementId: "G-2N007WSPVB"
+            apiKey: "BURAYA_KENDI_API_KEY_NİZİ_YAZIN",
+            authDomain: "BURAYA_KENDI_DOMAIN_NİZİ_YAZIN",
+            databaseURL: "BURAYA_KENDI_DATABASE_URL_NİZİ_YAZIN",
+            projectId: "BURAYA_KENDI_PROJECT_ID_NİZİ_YAZIN",
+            storageBucket: "BURAYA_KENDI_STORAGE_BUCKET_NİZİ_YAZIN",
+            messagingSenderId: "BURAYA_KENDI_SENDER_ID_NİZİ_YAZIN",
+            appId: "BURAYA_KENDI_APP_ID_NİZİ_YAZIN"
         };
 
         // Initialize Firebase
@@ -605,8 +557,7 @@
 
         // Basit giriş kontrolü
         const validCredentials = {
-            'admin': '123456',
-            'test': 'test123'
+            'admin': '123456'
         };
 
         // Login form
@@ -670,8 +621,7 @@
             const sortedUrls = [...urlsData].sort((a, b) => a.order - b.order);
             
             container.innerHTML = sortedUrls.map((url, index) => `
-                <div class="url-item" data-id="${index}">
-                    <div class="drag-handle">⋮⋮</div>
+                <div class="url-item">
                     <div class="url-info">
                         <div class="url-text">${url.url}</div>
                         <div class="url-order">Sıra: ${url.order}</div>
@@ -742,14 +692,12 @@
                 return;
             }
 
-            // Mevcut aktif URL'yi pasif yap
             urlsData.forEach(item => {
                 if (item.status === 'active') {
                     item.status = 'inactive';
                 }
             });
 
-            // Sıradaki URL'yi aktif yap
             nextUrl.status = 'active';
 
             try {
