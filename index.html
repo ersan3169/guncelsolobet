@@ -3,12 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoloBet Admin Paneli</title>
-    <meta name="robots" content="noindex, nofollow">
+    <title>SoloBet - Güncel Adres</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SoloBet">
+    <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2N007WSPVB"></script>
     
     <style>
         * {
@@ -19,554 +28,433 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            line-height: 1.6;
             color: #333;
-        }
-        
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #FF9500 0%, #FF6B35 50%, #FFB84D 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
-        .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-        
-        .logo-admin {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        
-        .login-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        .input-group {
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .input-group input, .input-group textarea, .input-group select {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-        }
-        
-        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 5px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-sm {
-            padding: 8px 15px;
-            font-size: 0.8rem;
-        }
-        
-        .btn-active {
-            background: #28a745;
-        }
-        
-        .btn-next {
-            background: #ffc107;
-            color: #333;
-        }
-        
-        .btn-inactive {
-            background: #dc3545;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-        }
-        
-        .btn-success {
-            background: #28a745;
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-        }
-        
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            display: none;
-        }
-        
-        .dashboard {
-            display: none;
-            padding: 20px;
-            max-width: 1400px;
+        .container {
+            max-width: 800px;
             margin: 0 auto;
         }
         
-        .dashboard-header {
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-container {
             background: white;
-            padding: 20px;
+            padding: 15px 25px;
             border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .current-url {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .url-display {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #FF6B35;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .main-button {
+            background: linear-gradient(135deg, #FF6B35, #FF9500);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+        
+        .main-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
+        }
+        
+        .next-urls {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .url-queue {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .queue-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
         }
-        
-        .dashboard-title {
-            font-size: 2rem;
+
+        .queue-item:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .queue-url {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .queue-url::before {
+            content: "▶";
+            margin-right: 10px;
+            color: #FF9500;
+            font-size: 0.8rem;
+        }
+
+        .queue-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: 700;
-            color: #333;
+            text-transform: uppercase;
+            border: 2px solid transparent;
         }
-        
-        .logout-btn {
+
+        .queue-status.active {
+            background: #28a745;
+            color: white;
+            border-color: #1e7e34;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+
+        .queue-status.next {
+            background: #ffc107;
+            color: #333;
+            border-color: #e0a800;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        .queue-status.inactive {
             background: #dc3545;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
+            border-color: #bd2130;
+        }
+
+        .queue-status.loading {
+            background: #17a2b8;
+            color: white;
+            border-color: #138496;
         }
         
-        .stats-grid {
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin: 30px 0;
         }
         
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: #666;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .admin-section {
+        .feature-card {
             background: white;
             padding: 25px;
             border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #333;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-        
-        .url-management {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .url-item {
-            display: grid;
-            grid-template-columns: 1fr auto auto auto auto;
-            gap: 10px;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .url-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        
-        .url-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .url-drag-handle {
-            cursor: grab;
-            color: #666;
-            font-size: 1.2rem;
-        }
-        
-        .url-drag-handle:active {
-            cursor: grabbing;
-        }
-        
-        .url-name {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #333;
-        }
-        
-        .url-order {
-            background: #e9ecef;
-            color: #666;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .current-status {
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            border: 2px solid;
-        }
-        
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-            border-color: #28a745;
-        }
-        
-        .status-next {
-            background: #fff3cd;
-            color: #856404;
-            border-color: #ffc107;
-        }
-        
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-            border-color: #dc3545;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .quick-action-btn {
-            padding: 15px;
-            border-radius: 10px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: white;
-            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .feature-desc {
+            color: #666;
             font-size: 0.9rem;
         }
         
-        .quick-action-btn:hover {
-            transform: translateY(-2px);
+        .notification-settings {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
         
-        .action-primary {
-            background: #667eea;
-        }
-        
-        .action-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        
-        .action-danger {
-            background: #dc3545;
-        }
-        
-        .action-success {
-            background: #28a745;
-        }
-        
-        .realtime-log {
+        .notification-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 20px;
-            height: 250px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            margin: 20px 0;
         }
         
-        .log-entry {
-            margin: 3px 0;
-            padding: 6px;
-            border-radius: 4px;
-            border-left: 3px solid;
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
         }
         
-        .log-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left-color: #17a2b8;
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
         
-        .log-success {
-            background: #d4edda;
-            color: #155724;
-            border-left-color: #28a745;
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
         }
         
-        .log-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left-color: #dc3545;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
         }
         
-        .log-warning {
-            background: #fff3cd;
-            color: #856404;
-            border-left-color: #ffc107;
+        input:checked + .slider {
+            background-color: #FF6B35;
         }
         
-        .notification-preview {
-            background: #e7f1ff;
-            border: 1px solid #b8daff;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
         
-        .preview-title {
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-        
-        .preview-message {
-            color: #666;
-        }
-        
-        .empty-state {
+        .update-info {
             text-align: center;
-            padding: 40px;
-            color: #666;
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
         
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
+        .offline-indicator {
+            background: #dc3545;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
         }
         
         @media (max-width: 768px) {
-            .dashboard {
+            .container {
                 padding: 15px;
             }
             
-            .dashboard-header {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .status-card, .notification-settings {
+                padding: 20px;
+            }
+            
+            .queue-item {
                 flex-direction: column;
-                gap: 15px;
                 text-align: center;
-            }
-            
-            .url-item {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 15px;
-            }
-            
-            .url-info {
-                justify-content: center;
-            }
-            
-            .action-buttons {
-                justify-content: center;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-card">
-            <div class="logo-admin">🛡️</div>
-            <h1 class="login-title">Admin Paneli</h1>
-            <div class="error-message" id="errorMessage">Geçersiz kullanıcı adı veya şifre!</div>
-            
-            <div class="input-group">
-                <label>Kullanıcı Adı</label>
-                <input type="text" id="username" placeholder="Admin kullanıcı adı" />
-            </div>
-            
-            <div class="input-group">
-                <label>Şifre</label>
-                <input type="password" id="password" placeholder="Admin şifresi" />
-            </div>
-            
-            <button class="btn" onclick="login()">Giriş Yap</button>
-        </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard" class="dashboard">
-        <div class="dashboard-header">
-            <h1 class="dashboard-title">🎛️ SoloBet Admin Paneli</h1>
-            <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
-        </div>
-
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalUrls">0</div>
-                <div class="stat-label">Toplam URL</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="activeUrls">0</div>
-                <div class="stat-label">Aktif URL</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalUsers">0</div>
-                <div class="stat-label">Toplam Kullanıcı</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="todayVisits">0</div>
-                <div class="stat-label">Bugünkü Ziyaret</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="notificationsSent">0</div>
-                <div class="stat-label">Gönderilen Bildirim</div>
-            </div>
-        </div>
-
-        <!-- URL Management -->
-        <div class="admin-section">
-            <h2 class="section-title">🌐 URL Durum Yönetimi</h2>
-            
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="quick-action-btn action-success" onclick="addNewUrl()">
-                    ➕ Yeni URL Ekle
-                </button>
-                <button class="quick-action-btn action-primary" onclick="checkAllUrls()">
-                    🔄 Tüm URL'leri Kontrol Et
-                </button>
-                <button class="quick-action-btn action-warning" onclick="reorderUrls()">
-                    📋 Sıralamayı Düzenle
-                </button>
-                <button class="quick-action-btn action-danger" onclick="resetAllStatus()">
-                    🔄 Durumları Sıfırla
-                </button>
-            </div>
-            
-            <div class="input-group">
-                <label>Yeni URL Ekle</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="newUrl" placeholder="örnek: solobet5.com" style="flex: 1;" />
-                    <button class="btn btn-success" onclick="addUrl()">Ekle</button>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-container">
+                    <h2 style="margin: 0; font-size: 2.5rem; font-weight: 900; color: #2C3E50; font-family: Arial Black, sans-serif;">
+                        Solo<span style="color: #FF6B35;">Bet</span>
+                    </h2>
                 </div>
             </div>
+            <h1>🌐 Güncel Adres</h1>
+            <p>Her zaman güncel SoloBet adresine ulaşın</p>
+        </div>
 
-            <div class="url-management" id="urlManagement">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🌐</div>
-                    <p>URL'ler yükleniyor...</p>
+        <div class="offline-indicator" id="offlineIndicator">
+            📵 İnternet bağlantısı yok - Önbellek kullanılıyor
+        </div>
+
+        <div class="status-card">
+            <div class="current-url">
+                <h3>🎯 Güncel Adres</h3>
+                <div class="url-display" id="currentUrl">
+                    Yükleniyor...
+                </div>
+                <div class="status">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <span id="statusText">Adres kontrol ediliyor...</span>
+                </div>
+                <button class="main-button" onclick="goToSite()">
+                    🚀 SoloBet'e Git
+                </button>
+            </div>
+            
+            <!-- Sıradaki Adresler -->
+            <div class="next-urls">
+                <h3 style="color: #28a745; margin-bottom: 20px; text-align: center;">📋 Sıradaki Adresler</h3>
+                <div class="url-queue" id="urlQueue">
+                    <div class="queue-item">
+                        <span class="queue-url">Yükleniyor...</span>
+                        <span class="queue-status loading">Kontrol ediliyor</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Notification Management -->
-        <div class="admin-section">
-            <h2 class="section-title">🔔 Bildirim Yönetimi</h2>
-            <div class="input-group">
-                <label>Bildirim Başlığı</label>
-                <input type="text" id="notificationTitle" placeholder="SoloBet Güncelleme" value="SoloBet Güncelleme" />
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <div class="feature-title">Otomatik Güncelleme</div>
+                <div class="feature-desc">Adresler otomatik kontrol edilir ve güncel olanına yönlendirilirsiniz</div>
             </div>
-            <div class="input-group">
-                <label>Bildirim Mesajı</label>
-                <textarea id="notificationMessage" placeholder="Yeni güncellemeler mevcut..." rows="3">Yeni güncellemeler mevcut...</textarea>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <div class="feature-title">Anında Bildirim</div>
+                <div class="feature-desc">Yeni adres geldiğinde hemen haberdar olursunuz</div>
             </div>
-            <button class="btn btn-success" onclick="sendBulkNotification()">Tüm Kullanıcılara Gönder</button>
-
-            <div class="notification-preview">
-                <strong>📱 Bildirim Önizlemesi:</strong>
-                <div class="preview-title" id="previewTitle">SoloBet Güncelleme</div>
-                <div class="preview-message" id="previewMessage">Yeni güncellemeler mevcut...</div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">Uygulama Gibi</div>
+                <div class="feature-desc">Ana ekrana ekleyince gerçek uygulama gibi çalışır</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">Güvenli Erişim</div>
+                <div class="feature-desc">Sadece güvenli ve aktif adreslere yönlendirilirsiniz</div>
             </div>
         </div>
 
-        <!-- Real-time Logs -->
-        <div class="admin-section">
-            <h2 class="section-title">📊 Canlı Sistem Logları</h2>
-            <div class="realtime-log" id="realtimeLog">
-                <div class="log-entry log-info">
-                    <strong>[INFO]</strong> Admin paneli başlatıldı - <span id="startTime"></span>
+        <div class="notification-settings">
+            <h3 style="margin-bottom: 20px;">🔔 Bildirim Ayarları</h3>
+            
+            <div class="notification-toggle">
+                <div>
+                    <strong>Adres Değişikliği Bildirimi</strong>
+                    <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9rem;">Yeni adres geldiğinde bildirim al</p>
                 </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="addressNotifications" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
-            <button class="btn btn-secondary" onclick="clearLogs()">Logları Temizle</button>
+
+            <div class="notification-toggle">
+                <div>
+                    <strong>Günlük Hatırlatma</strong>
+                    <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9rem;">Her gün güncel adresi kontrol et</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dailyReminder">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="update-info">
+            <p>📊 Son güncelleme: <span id="lastUpdate">Yükleniyor...</span></p>
+            <p>🔄 Sonraki kontrol: <span id="nextCheck">5 dakika sonra</span></p>
+            <p>👥 Aktif kullanıcı: <span id="activeUserCount">Yükleniyor...</span></p>
         </div>
     </div>
 
@@ -587,357 +475,398 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Admin credentials
-        const ADMIN_CREDENTIALS = {
-            username: 'solobet-admin',
-            password: 'SoloBet2025!@#'
-        };
+        // Google Analytics
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-2N007WSPVB');
 
-        let isLoggedIn = false;
-        let urlsData = [];
-        let stats = {
-            totalUrls: 0,
-            activeUrls: 0,
-            totalUsers: 0,
-            todayVisits: 0,
-            notificationsSent: 0
-        };
+        // Global Variables
+        let isOnline = navigator.onLine;
+        let availableUrls = ['solobet1.com', 'solobet2.com', 'solobet3.com'];
+        let urlsWithStatus = null; // Yeni: Status bilgili URL'ler
+        let currentUrlIndex = 0;
 
-        // Authentication
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMessage');
-
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                isLoggedIn = true;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadDashboardData();
-                addLog('Admin başarıyla giriş yaptı', 'success');
-                sessionStorage.setItem('adminLoggedIn', 'true');
-            } else {
-                errorMsg.style.display = 'block';
-                addLog('Başarısız admin girişi denemesi', 'error');
-                setTimeout(() => {
-                    errorMsg.style.display = 'none';
-                }, 3000);
-            }
-        }
-
-        function logout() {
-            isLoggedIn = false;
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            sessionStorage.removeItem('adminLoggedIn');
-            addLog('Admin çıkış yaptı', 'info');
-        }
-
-        // URL Management with Status
-        function addUrl() {
-            const newUrlInput = document.getElementById('newUrl');
-            const newUrl = newUrlInput.value.trim();
-            
-            if (!newUrl) {
-                alert('Lütfen bir URL girin!');
-                return;
-            }
-            
-            if (urlsData.find(item => item.url === newUrl)) {
-                alert('Bu URL zaten listede mevcut!');
-                return;
-            }
-            
-            const newUrlData = {
-                url: newUrl,
-                status: 'inactive',
-                order: urlsData.length + 1,
-                addedAt: Date.now()
-            };
-            
-            urlsData.push(newUrlData);
-            newUrlInput.value = '';
-            updateUrlDisplay();
-            saveUrlsToFirebase();
-            addLog(`Yeni URL eklendi: ${newUrl}`, 'success');
-            updateStats();
-        }
-
-        function addNewUrl() {
-            const url = prompt('Yeni URL girin (örn: solobet5.com):');
-            if (url) {
-                document.getElementById('newUrl').value = url;
-                addUrl();
-            }
-        }
-
-        function updateUrlStatus(index, newStatus) {
-            // Eğer aktif yapılıyorsa, diğerlerini pasif yap
-            if (newStatus === 'active') {
-                urlsData.forEach(item => {
-                    if (item.status === 'active') {
-                        item.status = 'inactive';
+        // Load URLs from Firebase with Status Support
+        function loadUrlsFromFirebase() {
+            // Yeni veri yapısını dinle (urlsData)
+            database.ref('urlsData').on('value', (snapshot) => {
+                const urlsData = snapshot.val();
+                if (urlsData && Array.isArray(urlsData) && urlsData.length > 0) {
+                    urlsWithStatus = urlsData;
+                    
+                    // URL'leri status'e göre sırala
+                    const sortedUrls = [...urlsData].sort((a, b) => {
+                        if (a.status === 'active') return -1;
+                        if (b.status === 'active') return 1;
+                        if (a.status === 'next') return -1;
+                        if (b.status === 'next') return 1;
+                        return a.order - b.order;
+                    });
+                    
+                    availableUrls = sortedUrls.map(item => item.url);
+                    
+                    // Aktif URL'yi bul ve currentUrlIndex'i ayarla
+                    const activeUrl = urlsData.find(item => item.status === 'active');
+                    if (activeUrl) {
+                        currentUrlIndex = availableUrls.indexOf(activeUrl.url);
+                    } else {
+                        currentUrlIndex = 0;
                     }
-                });
-            }
-            
-            // Eğer sıradaki yapılıyorsa, diğer sıradakileri pasif yap
-            if (newStatus === 'next') {
-                urlsData.forEach(item => {
-                    if (item.status === 'next') {
-                        item.status = 'inactive';
-                    }
-                });
-            }
-            
-            urlsData[index].status = newStatus;
-            updateUrlDisplay();
-            saveUrlsToFirebase();
-            addLog(`${urlsData[index].url} durumu değiştirildi: ${newStatus}`, 'info');
-            updateStats();
-        }
-
-        function removeUrl(index) {
-            const url = urlsData[index].url;
-            if (confirm(`${url} adresini silmek istediğinizden emin misiniz?`)) {
-                urlsData.splice(index, 1);
-                updateUrlDisplay();
-                saveUrlsToFirebase();
-                addLog(`URL silindi: ${url}`, 'warning');
-                updateStats();
-            }
-        }
-
-        function updateUrlDisplay() {
-            const container = document.getElementById('urlManagement');
-            
-            if (urlsData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🌐</div>
-                        <p>Henüz URL eklenmemiş</p>
-                        <button class="btn btn-success" onclick="addNewUrl()">İlk URL'yi Ekle</button>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort by order
-            urlsData.sort((a, b) => a.order - b.order);
-            
-            container.innerHTML = urlsData.map((item, index) => `
-                <div class="url-item">
-                    <div class="url-info">
-                        <div class="url-drag-handle">⋮⋮</div>
-                        <div class="url-order">#${item.order}</div>
-                        <div class="url-name">${item.url}</div>
-                    </div>
-                    <div class="current-status status-${item.status}">
-                        ${item.status === 'active' ? 'Aktif' : item.status === 'next' ? 'Sıradaki' : 'Pasif'}
-                    </div>
-                    <button class="btn btn-sm btn-active" onclick="updateUrlStatus(${index}, 'active')" title="Aktif Yap">
-                        🟢
-                    </button>
-                    <button class="btn btn-sm btn-next" onclick="updateUrlStatus(${index}, 'next')" title="Sıradaki Yap">
-                        🟡
-                    </button>
-                    <button class="btn btn-sm btn-inactive" onclick="updateUrlStatus(${index}, 'inactive')" title="Pasif Yap">
-                        🔴
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="removeUrl(${index})" title="Sil">
-                        🗑️
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function checkAllUrls() {
-            addLog('Tüm URL\'ler kontrol ediliyor...', 'info');
-            
-            urlsData.forEach(async (item, index) => {
-                // Simulated URL check
-                const isActive = Math.random() > 0.3;
-                const statusText = isActive ? 'çalışıyor' : 'çalışmıyor';
-                addLog(`${item.url} - ${statusText}`, isActive ? 'success' : 'error');
-            });
-            
-            setTimeout(() => {
-                addLog('URL kontrol işlemi tamamlandı', 'success');
-            }, 2000);
-        }
-
-        function reorderUrls() {
-            addLog('Sıralama düzenleme modu açıldı', 'info');
-            alert('URL\'leri sürükleyerek yeniden sıralayabilirsiniz. (Geliştirilecek özellik)');
-        }
-
-        function resetAllStatus() {
-            if (confirm('Tüm URL durumlarını sıfırlamak istediğinizden emin misiniz?')) {
-                urlsData.forEach(item => {
-                    item.status = 'inactive';
-                });
-                updateUrlDisplay();
-                saveUrlsToFirebase();
-                addLog('Tüm URL durumları sıfırlandı', 'warning');
-                updateStats();
-            }
-        }
-
-        function saveUrlsToFirebase() {
-            database.ref('urlsData').set(urlsData);
-            
-            // Backward compatibility - save simple URL array
-            const simpleUrls = urlsData.map(item => item.url);
-            database.ref('urls').set(simpleUrls);
-        }
-
-        // Notification Management
-        function sendBulkNotification() {
-            const title = document.getElementById('notificationTitle').value || 'SoloBet Güncelleme';
-            const message = document.getElementById('notificationMessage').value || 'Yeni güncellemeler mevcut...';
-            
-            database.ref('notifications').push({
-                title: title,
-                message: message,
-                timestamp: Date.now(),
-                sent: true,
-                adminId: 'current-admin'
-            });
-
-            stats.notificationsSent++;
-            updateStats();
-            addLog(`Toplu bildirim gönderildi: "${title}"`, 'success');
-            
-            database.ref('stats/notificationsSent').set(stats.notificationsSent);
-        }
-
-        // Logging System
-        function addLog(message, type = 'info') {
-            const log = document.getElementById('realtimeLog');
-            const timestamp = new Date().toLocaleTimeString('tr-TR');
-            const logEntry = document.createElement('div');
-            logEntry.className = `log-entry log-${type}`;
-            
-            let icon = '';
-            switch(type) {
-                case 'success': icon = '✅'; break;
-                case 'error': icon = '❌'; break;
-                case 'warning': icon = '⚠️'; break;
-                default: icon = 'ℹ️';
-            }
-            
-            logEntry.innerHTML = `<strong>[${type.toUpperCase()}]</strong> ${icon} ${message} - ${timestamp}`;
-            log.appendChild(logEntry);
-            log.scrollTop = log.scrollHeight;
-
-            database.ref('logs').push({
-                message: message,
-                type: type,
-                timestamp: Date.now(),
-                adminAction: true
-            });
-        }
-
-        function clearLogs() {
-            if (confirm('Tüm logları temizlemek istediğinizden emin misiniz?')) {
-                document.getElementById('realtimeLog').innerHTML = '';
-                addLog('Loglar temizlendi', 'warning');
-            }
-        }
-
-        // Statistics
-        function updateStats() {
-            stats.totalUrls = urlsData.length;
-            stats.activeUrls = urlsData.filter(item => item.status === 'active').length;
-            
-            document.getElementById('totalUrls').textContent = stats.totalUrls;
-            document.getElementById('activeUrls').textContent = stats.activeUrls;
-            document.getElementById('totalUsers').textContent = stats.totalUsers;
-            document.getElementById('todayVisits').textContent = stats.todayVisits;
-            document.getElementById('notificationsSent').textContent = stats.notificationsSent;
-            
-            database.ref('stats').update(stats);
-        }
-
-        function loadDashboardData() {
-            // Load URLs with status data
-            database.ref('urlsData').once('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && Array.isArray(data)) {
-                    urlsData = data;
-                } else if (data) {
-                    urlsData = Object.values(data);
+                    
+                    updateCurrentUrl();
+                    updateUrlQueue();
                 } else {
-                    // Initialize with default data
-                    urlsData = [
-                        { url: 'solobet1.com', status: 'active', order: 1, addedAt: Date.now() },
-                        { url: 'solobet2.com', status: 'next', order: 2, addedAt: Date.now() },
-                        { url: 'solobet3.com', status: 'inactive', order: 3, addedAt: Date.now() }
-                    ];
-                    saveUrlsToFirebase();
-                }
-                updateUrlDisplay();
-                updateStats();
-            });
-
-            // Load stats
-            database.ref('stats').once('value', (snapshot) => {
-                const firebaseStats = snapshot.val();
-                if (firebaseStats) {
-                    stats = { ...stats, ...firebaseStats };
-                    updateStats();
+                    // Fallback - eski veri yapısını dinle
+                    database.ref('urls').once('value', (oldSnapshot) => {
+                        const urls = oldSnapshot.val();
+                        if (urls && Array.isArray(urls) && urls.length > 0) {
+                            availableUrls = urls;
+                            // Eski veri yapısını yeni formata çevir
+                            urlsWithStatus = urls.map((url, index) => ({
+                                url: url,
+                                status: index === 0 ? 'active' : index === 1 ? 'next' : 'inactive',
+                                order: index + 1,
+                                addedAt: Date.now()
+                            }));
+                            updateCurrentUrl();
+                            updateUrlQueue();
+                        }
+                    });
                 }
             });
+        }
 
-            // Real-time listeners
+        // Check URL status (simulated)
+        async function checkUrlStatus(url) {
+            try {
+                return Math.random() > 0.3; // 70% success rate
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function updateCurrentUrl() {
+            const urlDisplay = document.getElementById('currentUrl');
+            const statusText = document.getElementById('statusText');
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            if (!isOnline) {
+                statusText.textContent = 'Çevrimdışı - Önbellek kullanılıyor';
+                statusIndicator.style.backgroundColor = '#ffc107';
+                return;
+            }
+
+            if (availableUrls.length === 0) {
+                urlDisplay.textContent = 'Adres bulunamadı';
+                statusText.textContent = 'Henüz adres eklenmemiş';
+                statusIndicator.style.backgroundColor = '#dc3545';
+                return;
+            }
+
+            // Aktif URL'yi göster
+            let currentUrl;
+            if (urlsWithStatus) {
+                const activeUrl = urlsWithStatus.find(item => item.status === 'active');
+                currentUrl = activeUrl ? activeUrl.url : availableUrls[0];
+            } else {
+                currentUrl = availableUrls[currentUrlIndex];
+            }
+            
+            urlDisplay.textContent = currentUrl;
+            
+            checkUrlStatus(currentUrl).then(isActive => {
+                if (isActive) {
+                    statusText.textContent = 'Aktif ve Erişilebilir';
+                    statusIndicator.style.backgroundColor = '#28a745';
+                } else {
+                    // Sıradaki URL'ye geç
+                    if (urlsWithStatus) {
+                        const nextUrl = urlsWithStatus.find(item => item.status === 'next');
+                        if (nextUrl) {
+                            statusText.textContent = 'Sıradaki adrese yönlendiriliyor...';
+                            statusIndicator.style.backgroundColor = '#ffc107';
+                            
+                            sendNotification('SoloBet Adres Güncellendi', `Yeni adres: ${nextUrl.url}`);
+                            
+                            setTimeout(() => {
+                                updateCurrentUrl();
+                            }, 2000);
+                        } else {
+                            statusText.textContent = 'Yedek adres bulunamadı';
+                            statusIndicator.style.backgroundColor = '#dc3545';
+                        }
+                    } else {
+                        // Eski sistem
+                        currentUrlIndex = (currentUrlIndex + 1) % availableUrls.length;
+                        statusText.textContent = 'Yeni adrese yönlendiriliyor...';
+                        statusIndicator.style.backgroundColor = '#ffc107';
+                        
+                        sendNotification('SoloBet Adres Güncellendi', `Yeni adres: ${availableUrls[currentUrlIndex]}`);
+                        
+                        setTimeout(() => {
+                            updateCurrentUrl();
+                        }, 2000);
+                    }
+                }
+            });
+            
+            updateUrlQueue();
+        }
+
+        function updateUrlQueue() {
+            const queueContainer = document.getElementById('urlQueue');
+            queueContainer.innerHTML = '';
+            
+            if (!urlsWithStatus || urlsWithStatus.length === 0) {
+                if (availableUrls.length === 0) {
+                    queueContainer.innerHTML = '<div class="queue-item"><span class="queue-url">Henüz adres eklenmemiş</span><span class="queue-status loading">Bekleniyor</span></div>';
+                } else {
+                    // Fallback: Eski sistem
+                    availableUrls.forEach((url, index) => {
+                        const queueItem = document.createElement('div');
+                        queueItem.className = 'queue-item';
+                        
+                        let status = '';
+                        let statusClass = '';
+                        
+                        if (index === currentUrlIndex) {
+                            status = 'Aktif';
+                            statusClass = 'active';
+                        } else if (index === (currentUrlIndex + 1) % availableUrls.length) {
+                            status = 'Sıradaki';
+                            statusClass = 'next';
+                        } else {
+                            const isWorking = Math.random() > 0.4;
+                            status = isWorking ? 'Aktif' : 'Pasif';
+                            statusClass = isWorking ? 'active' : 'inactive';
+                        }
+                        
+                        queueItem.innerHTML = `
+                            <span class="queue-url">${url}</span>
+                            <span class="queue-status ${statusClass}">${status}</span>
+                        `;
+                        
+                        queueContainer.appendChild(queueItem);
+                    });
+                }
+                return;
+            }
+            
+            // Yeni sistem: Status bilgili URL'ler
+            const sortedUrls = [...urlsWithStatus].sort((a, b) => {
+                // Önce aktif, sonra sıradaki, sonra pasifler
+                const statusOrder = { 'active': 1, 'next': 2, 'inactive': 3 };
+                if (statusOrder[a.status] !== statusOrder[b.status]) {
+                    return statusOrder[a.status] - statusOrder[b.status];
+                }
+                return a.order - b.order;
+            });
+            
+            sortedUrls.forEach((urlData) => {
+                const queueItem = document.createElement('div');
+                queueItem.className = 'queue-item';
+                
+                let status = '';
+                let statusClass = '';
+                
+                switch(urlData.status) {
+                    case 'active':
+                        status = 'Aktif';
+                        statusClass = 'active';
+                        break;
+                    case 'next':
+                        status = 'Sıradaki';
+                        statusClass = 'next';
+                        break;
+                    case 'inactive':
+                    default:
+                        status = 'Pasif';
+                        statusClass = 'inactive';
+                        break;
+                }
+                
+                queueItem.innerHTML = `
+                    <span class="queue-url">${urlData.url}</span>
+                    <span class="queue-status ${statusClass}">${status}</span>
+                `;
+                
+                queueContainer.appendChild(queueItem);
+            });
+        }
+
+        function sendNotification(title, message) {
+            const addressNotifications = document.getElementById('addressNotifications').checked;
+            
+            if (addressNotifications && 'Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: message,
+                    icon: '/android-chrome-192x192.png'
+                });
+            }
+        }
+
+        function goToSite() {
+            const currentUrl = document.getElementById('currentUrl').textContent;
+            
+            if (currentUrl === 'Yükleniyor...') {
+                alert('Adres yükleniyor, lütfen bekleyin...');
+                return;
+            }
+            
+            // Analytics tracking
+            gtag('event', 'site_visit', {
+                'url': currentUrl,
+                'timestamp': Date.now()
+            });
+            
+            // Update visit count in Firebase
+            database.ref('stats/visits').transaction((currentVisits) => {
+                return (currentVisits || 0) + 1;
+            });
+            
+            window.open(`https://${currentUrl}`, '_blank');
+        }
+
+        function updateTimestamps() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('tr-TR');
+            
+            const nextCheck = new Date(now.getTime() + 5 * 60000);
+            document.getElementById('nextCheck').textContent = nextCheck.toLocaleTimeString('tr-TR');
+        }
+
+        // Real-time user count
+        function updateUserCount() {
+            const userId = generateUserId();
+            
+            database.ref('users/' + userId).set({
+                lastSeen: Date.now(),
+                online: true
+            });
+
             database.ref('users').on('value', (snapshot) => {
                 const users = snapshot.val();
                 if (users) {
-                    stats.totalUsers = Object.keys(users).length;
-                    document.getElementById('totalUsers').textContent = stats.totalUsers;
-                }
-            });
-
-            database.ref('stats/visits').on('value', (snapshot) => {
-                const visits = snapshot.val();
-                if (visits) {
-                    stats.todayVisits = visits;
-                    document.getElementById('todayVisits').textContent = stats.todayVisits;
+                    const onlineUsers = Object.values(users).filter(user => 
+                        Date.now() - user.lastSeen < 300000
+                    ).length;
+                    document.getElementById('activeUserCount').textContent = onlineUsers;
                 }
             });
         }
 
-        // Notification preview updates
-        document.getElementById('notificationTitle').addEventListener('input', function() {
-            document.getElementById('previewTitle').textContent = this.value || 'SoloBet Güncelleme';
-        });
-
-        document.getElementById('notificationMessage').addEventListener('input', function() {
-            document.getElementById('previewMessage').textContent = this.value || 'Yeni güncellemeler mevcut...';
-        });
-
-        // Handle Enter key in login form
-        document.addEventListener('keydown', function(e) {
-            if (!isLoggedIn && e.key === 'Enter') {
-                login();
+        function generateUserId() {
+            let userId = localStorage.getItem('solobetUserId');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('solobetUserId', userId);
             }
+            return userId;
+        }
+
+        // Listen for notifications from admin
+        function listenForNotifications() {
+            database.ref('notifications').orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
+                const notification = snapshot.val();
+                if (notification && notification.sent && Date.now() - notification.timestamp < 60000) {
+                    sendNotification(notification.title, notification.message);
+                }
+            });
+        }
+
+        // Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker registered');
+                })
+                .catch(error => {
+                    console.log('Service Worker registration failed');
+                });
+        }
+
+        // Event Listeners
+        window.addEventListener('online', () => {
+            isOnline = true;
+            document.getElementById('offlineIndicator').style.display = 'none';
+            updateCurrentUrl();
         });
 
-        // Initialize dashboard
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            document.getElementById('offlineIndicator').style.display = 'block';
+            updateCurrentUrl();
+        });
+
+        // Settings persistence
+        document.getElementById('addressNotifications').addEventListener('change', function() {
+            const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
+            settings.addressNotifications = this.checked;
+            localStorage.setItem('solobetSettings', JSON.stringify(settings));
+        });
+
+        document.getElementById('dailyReminder').addEventListener('change', function() {
+            const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
+            settings.dailyReminder = this.checked;
+            localStorage.setItem('solobetSettings', JSON.stringify(settings));
+        });
+
+        // Initialize app
         window.addEventListener('load', () => {
-            document.getElementById('startTime').textContent = new Date().toLocaleString('tr-TR');
-            
-            // Check if already logged in
-            const savedSession = sessionStorage.getItem('adminLoggedIn');
-            if (savedSession === 'true') {
-                isLoggedIn = true;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadDashboardData();
-                addLog('Oturum geri yüklendi', 'info');
+            // Request notification permission
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        console.log('Bildirim izni:', permission);
+                    });
+                }
+                console.log('Mevcut bildirim izni:', Notification.permission);
             }
+
+            // Load saved settings
+            const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
+            if (settings.addressNotifications !== undefined) {
+                document.getElementById('addressNotifications').checked = settings.addressNotifications;
+            }
+            if (settings.dailyReminder !== undefined) {
+                document.getElementById('dailyReminder').checked = settings.dailyReminder;
+            }
+
+            // Initialize Firebase listeners
+            loadUrlsFromFirebase();
+            listenForNotifications();
+            
+            // Initialize app
+            updateCurrentUrl();
+            updateTimestamps();
+            updateUserCount();
+
+            // Check offline status
+            if (!isOnline) {
+                document.getElementById('offlineIndicator').style.display = 'block';
+            }
+
+            // Auto-update intervals
+            setInterval(() => {
+                if (isOnline) {
+                    updateCurrentUrl();
+                    updateTimestamps();
+                }
+            }, 5 * 60 * 1000);
+
+            // Bildirim test
+            setTimeout(() => {
+                if (Notification.permission === 'granted') {
+                    new Notification('Test', { body: 'Bildirim sistemi çalışıyor!' });
+                }
+            }, 3000);
+
+            // Analytics page view
+            gtag('event', 'page_view', {
+                page_title: 'SoloBet Güncel Adres',
+                page_location: 'https://guncelsolobet.com'
+            });
         });
     </script>
 </body>
