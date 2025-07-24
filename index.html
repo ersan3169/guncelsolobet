@@ -291,6 +291,30 @@
             margin-bottom: 3px;
         }
         
+        .quick-install-btn {
+            background: linear-gradient(135deg, #FF6B35, #FF9500);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        .quick-install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+        
+        .quick-install-btn.visible {
+            display: block;
+        }
+        
         /* Bildirim Ayarları */
         .notification-settings {
             background: white;
@@ -744,11 +768,95 @@
         document.getElementById('addressNotifications').addEventListener('change', saveNotificationSettings);
         document.getElementById('dailyReminder').addEventListener('change', saveNotificationSettings);
 
+        // Platform Detection and Install Prompt
+        let deferredPrompt;
+        let userPlatform = 'unknown';
+
+        function detectPlatform() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            
+            if (/iphone|ipad|ipod/.test(userAgent)) {
+                userPlatform = 'ios';
+            } else if (/android/.test(userAgent)) {
+                userPlatform = 'android';
+            } else if (/huawei|honor|hisilicon/.test(userAgent)) {
+                userPlatform = 'huawei';
+            } else if (/android/.test(userAgent)) {
+                userPlatform = 'android'; // Fallback for other Android devices
+            }
+            
+            // Show install button for detected platform
+            if (userPlatform !== 'unknown') {
+                const installBtn = document.getElementById(userPlatform + 'Install');
+                const platformCard = document.getElementById(userPlatform + 'Card');
+                
+                if (installBtn) {
+                    installBtn.classList.add('visible');
+                }
+                
+                if (platformCard) {
+                    platformCard.style.border = '2px solid #FF6B35';
+                    platformCard.style.background = 'linear-gradient(135deg, #fff8f5, #ffffff)';
+                }
+            }
+        }
+
+        function showInstallPrompt(platform) {
+            if (platform === 'android' && deferredPrompt) {
+                // Use native install prompt for Android
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Kullanıcı uygulamayı kurdu');
+                    }
+                    deferredPrompt = null;
+                });
+            } else if (platform === 'ios') {
+                // Show iOS instructions
+                alert('iOS Kurulum:\n\n1. Safari alt menüsünden "Paylaş" butonuna tıklayın\n2. "Ana Ekrana Ekle" seçeneğini seçin\n3. "Ekle" butonuna tıklayın\n\nKurulum tamamlandı! 🎉');
+            } else if (platform === 'huawei') {
+                // Show Huawei instructions  
+                alert('Huawei Kurulum:\n\n1. Tarayıcı menüsüne tıklayın\n2. "Ana ekrana ekle" seçeneğini bulun\n3. Uygulama adını onaylayın\n4. Kurulumu tamamlayın\n\nKurulum tamamlandı! 🎉');
+            } else {
+                // Fallback for other platforms
+                alert('Manuel Kurulum:\n\nTarayıcınızın menüsünden "Ana ekrana ekle" veya "Bookmark ekle" seçeneğini kullanarak siteyi ana ekranınıza ekleyebilirsiniz.');
+            }
+        }
+
+        // Listen for PWA install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button if not already visible
+            if (userPlatform === 'android') {
+                const installBtn = document.getElementById('androidInstall');
+                if (installBtn) {
+                    installBtn.classList.add('visible');
+                    installBtn.textContent = '📲 Şimdi Ana Ekrana Ekle';
+                }
+            }
+        });
+
+        // Track app install
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('Uygulama başarıyla kuruldu');
+            
+            // Hide install buttons
+            document.querySelectorAll('.quick-install-btn').forEach(btn => {
+                btn.style.display = 'none';
+            });
+            
+            // Show success message
+            alert('🎉 SoloBet başarıyla ana ekranınıza eklendi!\n\nArtık ana ekranınızdan tek tıkla erişebilirsiniz.');
+        });
+
         // Initialize
         window.addEventListener('load', () => {
             loadUrls();
             loadNotificationSettings();
             updateStats();
+            detectPlatform(); // Platform algılama
 
             // Request notification permission
             if ('Notification' in window && Notification.permission === 'default') {
