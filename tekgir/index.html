@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoloBet - Admin Girişi</title>
+    <title>SoloBet - Admin Panel</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     
     <style>
         * {
@@ -16,12 +20,18 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             min-height: 100vh;
+        }
+        
+        /* Login Ekranı Stilleri */
+        .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
         
-        .login-container {
+        .login-box {
             background: white;
             padding: 40px;
             border-radius: 20px;
@@ -96,79 +106,383 @@
             display: none;
         }
         
+        /* Admin Panel Stilleri */
         .admin-panel {
             display: none;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #2C3E50;
+            font-size: 2rem;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #E74C3C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            background: #C0392B;
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2C3E50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495E;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #E8E8E8;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3498DB;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27AE60, #2ECC71);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #F39C12, #F1C40F);
+            color: #2C3E50;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .url-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .url-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #F8F9FA;
+        }
+        
+        .url-info {
+            flex: 1;
+        }
+        
+        .url-text {
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 5px;
+        }
+        
+        .url-order {
+            font-size: 0.9rem;
+            color: #7F8C8D;
+        }
+        
+        .url-status {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0 10px;
+        }
+        
+        .status-active {
+            background: #27AE60;
+            color: white;
+        }
+        
+        .status-next {
+            background: #F39C12;
+            color: white;
+        }
+        
+        .status-inactive {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        .url-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            min-width: 60px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #D5EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+        
+        .alert-error {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F5C6CB;
+        }
+        
+        .credentials-info {
+            background: #E8F4FD;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #2C3E50;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .url-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .url-actions {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Login Ekranı -->
     <div class="login-container" id="loginScreen">
-        <div class="logo">
-            Solo<span>Bet</span>
+        <div class="login-box">
+            <div class="logo">
+                Solo<span>Bet</span>
+            </div>
+            <h2 style="margin-bottom: 20px; color: #2C3E50;">Admin Girişi</h2>
+            
+            <div class="credentials-info">
+                <strong>Test Giriş Bilgileri:</strong><br>
+                Kullanıcı: <code>admin</code><br>
+                Şifre: <code>123456</code>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Kullanıcı Adı</label>
+                    <input type="text" class="form-input" id="username" value="admin" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Şifre</label>
+                    <input type="password" class="form-input" id="password" value="123456" required>
+                </div>
+                <button type="submit" class="btn-login">
+                    🔐 Giriş Yap
+                </button>
+                <div class="error-message" id="errorMessage">
+                    Hatalı kullanıcı adı veya şifre!
+                </div>
+            </form>
         </div>
-        <h2 style="margin-bottom: 30px; color: #2C3E50;">Admin Girişi</h2>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label class="form-label">Kullanıcı Adı</label>
-                <input type="text" class="form-input" id="username" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Şifre</label>
-                <input type="password" class="form-input" id="password" required>
-            </div>
-            <button type="submit" class="btn-login">
-                🔐 Giriş Yap
-            </button>
-            <div class="error-message" id="errorMessage">
-                Hatalı kullanıcı adı veya şifre!
-            </div>
-        </form>
     </div>
 
-    <!-- Admin Panel (Gizli) -->
+    <!-- Admin Panel -->
     <div class="admin-panel" id="adminPanel">
-        <!-- Buraya önceki admin panel kodunun tamamını koyun -->
-        <div style="background: white; min-height: 100vh;">
-            <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                    <h1 style="color: #2C3E50;">🛠️ SoloBet Admin Panel</h1>
-                    <button onclick="logout()" style="padding: 10px 20px; background: #E74C3C; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                        🚪 Çıkış Yap
-                    </button>
+        <div class="container">
+            <div class="header">
+                <h1>🛠️ SoloBet Admin Panel</h1>
+                <button class="logout-btn" onclick="logout()">
+                    🚪 Çıkış Yap
+                </button>
+            </div>
+
+            <!-- Ana Panel -->
+            <div class="admin-grid">
+                <!-- URL Ekleme -->
+                <div class="panel-card">
+                    <h3 class="card-title">
+                        ➕ Yeni URL Ekle
+                    </h3>
+                    <div id="addAlert" class="alert"></div>
+                    <form id="addUrlForm">
+                        <div class="form-group">
+                            <label class="form-label">URL Adresi</label>
+                            <input type="text" class="form-input" id="newUrl" placeholder="örn: sahabet1234.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Durum</label>
+                            <select class="form-select" id="newStatus">
+                                <option value="inactive">Pasif</option>
+                                <option value="next">Sıradaki</option>
+                                <option value="active">Aktif</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sıra</label>
+                            <input type="number" class="form-input" id="newOrder" min="1" value="1">
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            ✅ URL Ekle
+                        </button>
+                    </form>
                 </div>
-                
-                <!-- Buraya admin panel içeriğini ekleyin -->
-                <p style="color: #7F8C8D; text-align: center; padding: 50px;">
-                    Admin panel içeriği buraya gelecek...
-                </p>
+
+                <!-- URL Listesi -->
+                <div class="panel-card">
+                    <h3 class="card-title">
+                        📋 URL Yönetimi
+                    </h3>
+                    <div id="listAlert" class="alert"></div>
+                    <div class="url-list" id="urlList">
+                        <div style="text-align: center; color: #7F8C8D; padding: 20px;">
+                            Yükleniyor...
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Basit şifre kontrolü (Güvenlik için daha karmaşık hale getirin)
-        const validCredentials = {
-            'admin': 'solobet2024',
-            'operator': 'operator123'
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBGCbLgFY5u7TUs7njM2PAqUyRTCQuIx6E",
+            authDomain: "guncelsolobet.firebaseapp.com",
+            databaseURL: "https://guncelsolobet-default-rtdb.europe-west1.firebasedatabase.app/",
+            projectId: "guncelsolobet",
+            storageBucket: "guncelsolobet.firebasestorage.app",
+            messagingSenderId: "282558930683",
+            appId: "1:282558930683:web:80751459579a9c31d15a5e",
+            measurementId: "G-2N007WSPVB"
         };
 
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let urlsData = [];
+
+        // Basit giriş kontrolü
+        const validCredentials = {
+            'admin': '123456',
+            'test': 'test123'
+        };
+
+        // Login form
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            console.log('Giriş deneniyor:', username, password); // Debug için
             
             if (validCredentials[username] && validCredentials[username] === password) {
-                // Başarılı giriş
+                console.log('Giriş başarılı!'); // Debug için
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                
-                // Session storage'a kaydet
                 sessionStorage.setItem('adminLoggedIn', 'true');
+                loadUrls(); // Firebase verilerini yükle
             } else {
-                // Hatalı giriş
+                console.log('Giriş başarısız!'); // Debug için
                 document.getElementById('errorMessage').style.display = 'block';
                 setTimeout(() => {
                     document.getElementById('errorMessage').style.display = 'none';
@@ -183,11 +497,146 @@
             document.getElementById('loginForm').reset();
         }
 
+        // Show alert messages
+        function showAlert(elementId, message, type = 'success') {
+            const alert = document.getElementById(elementId);
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Load URLs from Firebase
+        function loadUrls() {
+            database.ref('urlsData').on('value', (snapshot) => {
+                const data = snapshot.val();
+                urlsData = data ? data : [];
+                renderUrlList();
+            });
+        }
+
+        // Render URL list
+        function renderUrlList() {
+            const container = document.getElementById('urlList');
+            
+            if (urlsData.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #7F8C8D; padding: 20px;">Henüz URL eklenmemiş</div>';
+                return;
+            }
+
+            const sortedUrls = [...urlsData].sort((a, b) => a.order - b.order);
+            
+            container.innerHTML = sortedUrls.map((url, index) => `
+                <div class="url-item">
+                    <div class="url-info">
+                        <div class="url-text">${url.url}</div>
+                        <div class="url-order">Sıra: ${url.order}</div>
+                    </div>
+                    <div class="url-status status-${url.status}">
+                        ${url.status === 'active' ? 'Aktif' : url.status === 'next' ? 'Sıradaki' : 'Pasif'}
+                    </div>
+                    <div class="url-actions">
+                        <button class="btn btn-warning btn-small" onclick="editUrl(${index})">✏️</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteUrl(${index})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add new URL
+        document.getElementById('addUrlForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const url = document.getElementById('newUrl').value.trim();
+            const status = document.getElementById('newStatus').value;
+            const order = parseInt(document.getElementById('newOrder').value);
+
+            if (!url) {
+                showAlert('addAlert', 'URL adresi gerekli!', 'error');
+                return;
+            }
+
+            if (urlsData.some(item => item.url === url)) {
+                showAlert('addAlert', 'Bu URL zaten mevcut!', 'error');
+                return;
+            }
+
+            if (status === 'active') {
+                urlsData.forEach(item => {
+                    if (item.status === 'active') {
+                        item.status = 'inactive';
+                    }
+                });
+            }
+
+            const newUrl = {
+                url: url,
+                status: status,
+                order: order,
+                addedAt: Date.now()
+            };
+
+            urlsData.push(newUrl);
+            
+            try {
+                await database.ref('urlsData').set(urlsData);
+                showAlert('addAlert', 'URL başarıyla eklendi!', 'success');
+                document.getElementById('addUrlForm').reset();
+                document.getElementById('newOrder').value = urlsData.length + 1;
+            } catch (error) {
+                showAlert('addAlert', 'Hata: ' + error.message, 'error');
+            }
+        });
+
+        // Delete URL
+        async function deleteUrl(index) {
+            if (!confirm('Bu URL\'yi silmek istediğinizden emin misiniz?')) {
+                return;
+            }
+
+            urlsData.splice(index, 1);
+            
+            try {
+                await database.ref('urlsData').set(urlsData);
+                showAlert('listAlert', 'URL başarıyla silindi!', 'success');
+            } catch (error) {
+                showAlert('listAlert', 'Hata: ' + error.message, 'error');
+            }
+        }
+
+        // Edit URL
+        function editUrl(index) {
+            const url = urlsData[index];
+            const newStatus = prompt('Yeni durum seçin:\nactive - Aktif\nnext - Sıradaki\ninactive - Pasif', url.status);
+            
+            if (newStatus && ['active', 'next', 'inactive'].includes(newStatus)) {
+                if (newStatus === 'active') {
+                    urlsData.forEach(item => {
+                        if (item.status === 'active') {
+                            item.status = 'inactive';
+                        }
+                    });
+                }
+                
+                urlsData[index].status = newStatus;
+                
+                database.ref('urlsData').set(urlsData).then(() => {
+                    showAlert('listAlert', 'URL durumu güncellendi!', 'success');
+                }).catch(error => {
+                    showAlert('listAlert', 'Hata: ' + error.message, 'error');
+                });
+            }
+        }
+
         // Sayfa yüklendiğinde session kontrolü
         window.addEventListener('load', function() {
             if (sessionStorage.getItem('adminLoggedIn') === 'true') {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
+                loadUrls();
             }
         });
     </script>
