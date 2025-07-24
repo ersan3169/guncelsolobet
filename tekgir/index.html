@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoloBet Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        .dashboard {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 90%;
+        }
+        .dashboard h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #667eea;
+        }
+        .url-section {
+            margin: 30px 0;
+        }
+        .url-input {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .url-input input {
+            flex: 1;
+        }
+        .url-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .url-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .status-active {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .status-inactive {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        .logout-btn {
+            background: #dc3545;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-card">
+        <div class="logo">🛡️</div>
+        <h1 class="title">Admin Paneli</h1>
+        <div class="error" id="errorMessage">Geçersiz kullanıcı adı veya şifre!</div>
+        
+        <div class="input-group">
+            <label>Kullanıcı Adı</label>
+            <input type="text" id="username" placeholder="Admin kullanıcı adı" />
+        </div>
+        
+        <div class="input-group">
+            <label>Şifre</label>
+            <input type="password" id="password" placeholder="Admin şifresi" />
+        </div>
+        
+        <button class="btn" onclick="login()">Giriş Yap</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <h2>🎛️ SoloBet Admin Kontrol Paneli</h2>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="totalUrls">3</div>
+                <div>Toplam URL</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="activeUrls">2</div>
+                <div>Aktif URL</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="todayVisits">47</div>
+                <div>Bugünkü Ziyaret</div>
+            </div>
+        </div>
+
+        <div class="url-section">
+            <h3>🌐 URL Yönetimi</h3>
+            <div class="url-input">
+                <input type="text" id="newUrl" placeholder="örnek: solobet5.com" />
+                <button class="btn" onclick="addUrl()" style="width: auto; margin: 0;">URL Ekle</button>
+            </div>
+
+            <div class="url-list">
+                <div class="url-item">
+                    <span>solobet1.com</span>
+                    <span class="status-active">Aktif</span>
+                </div>
+                <div class="url-item">
+                    <span>solobet2.com</span>
+                    <span class="status-active">Aktif</span>
+                </div>
+                <div class="url-item">
+                    <span>solobet3.com</span>
+                    <span class="status-inactive">Pasif</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn logout-btn" onclick="logout()">Çıkış Yap</button>
+    </div>
+
+    <script>
+        // Admin credentials
+        const ADMIN_USER = 'solobet-admin';
+        const ADMIN_PASS = 'SoloBet2025!@#';
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+
+            if (username === ADMIN_USER && password === ADMIN_PASS) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                console.log('Admin giriş başarılı');
+            } else {
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function logout() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function addUrl() {
+            const newUrl = document.getElementById('newUrl').value.trim();
+            if (newUrl) {
+                alert('URL eklendi: ' + newUrl);
+                document.getElementById('newUrl').value = '';
+                // Gerçek implementasyonda Firebase'e kaydedilecek
+            }
+        }
+
+        // Enter tuşu ile giriş
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>
