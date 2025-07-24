@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoloBet - Güncel Adres</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #FF9500 0%, #FF6B35 50%, #FFB84D 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #2C3E50;
+        }
+        .logo span {
+            color: #FF6B35;
+        }
+        .current-url {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.5rem;
+            color: #FF6B35;
+            font-weight: 600;
+        }
+        .btn {
+            background: linear-gradient(135deg, #FF6B35, #FF9500);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Solo<span>Bet</span></div>
+        <h1>🌐 Güncel Adres</h1>
+        <div class="current-url" id="currentUrl">solobet1.com</div>
+        <button class="btn" onclick="goToSite()">🚀 SoloBet'e Git</button>
+        <p>Test versiyonu - Yakında tam özelliklerle!</p>
+    </div>
+
+    <script>
+        function goToSite() {
+            const url = document.getElementById('currentUrl').textContent;
+            window.open('https://' + url, '_blank');
+        }
+    </script>
+</body>
+</html>
