@@ -803,23 +803,81 @@
 
         function showInstallPrompt(platform) {
             if (platform === 'android' && deferredPrompt) {
-                // Use native install prompt for Android
+                // Android için native install prompt
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        console.log('Kullanıcı uygulamayı kurdu');
+                        alert('🎉 SoloBet başarıyla ana ekranınıza eklendi!\n\nArtık ana ekranınızdan tek tıkla erişebilirsiniz.');
+                        // Install butonlarını gizle
+                        document.querySelectorAll('.quick-install-btn').forEach(btn => {
+                            btn.style.display = 'none';
+                        });
+                    } else {
+                        alert('📱 Manuel Kurulum:\n\n1. Chrome menüsünden (⋮) "Ana ekrana ekle" seçin\n2. "Ekle" butonuna tıklayın\n\nKurulum tamamlandı! 🎉');
                     }
                     deferredPrompt = null;
                 });
             } else if (platform === 'ios') {
-                // Show iOS instructions
-                alert('iOS Kurulum:\n\n1. Safari alt menüsünden "Paylaş" butonuna tıklayın\n2. "Ana Ekrana Ekle" seçeneğini seçin\n3. "Ekle" butonuna tıklayın\n\nKurulum tamamlandı! 🎉');
+                // iOS için otomatik adım rehberi
+                if (confirm('📱 iOS Kurulum Başlıyor!\n\n✅ "Tamam" butonuna tıklayın\n❌ "İptal" = Manuel talimatları göster')) {
+                    // Adım adım rehber
+                    setTimeout(() => {
+                        alert('📱 ADIM 1/4\n\n👆 Şimdi ekranın ALT kısmındaki "PAYLAŞ" butonuna tıklayın\n\n(Safari\'nin alt menüsündeki kare+ok ikonu)');
+                    }, 500);
+                    
+                    setTimeout(() => {
+                        alert('📱 ADIM 2/4\n\n👆 Açılan menüden "ANA EKRANA EKLE" seçeneğini bulun ve tıklayın\n\n(📱 telefon ikonu ile)');
+                    }, 4000);
+                    
+                    setTimeout(() => {
+                        alert('📱 ADIM 3/4\n\n👆 Uygulama adını kontrol edin: "SoloBet"\n\n👆 Sağ üst köşedeki "EKLE" butonuna tıklayın');
+                    }, 8000);
+                    
+                    setTimeout(() => {
+                        alert('🎉 ADIM 4/4 - TAMAMLANDI!\n\n✅ SoloBet ana ekranınıza eklendi!\n📱 Artık ana ekranınızdan tek tıkla erişebilirsiniz!\n\n🎯 Ana ekranda SoloBet ikonunu arayın.');
+                    }, 12000);
+                } else {
+                    // Manuel talimatlar
+                    alert('📱 iOS Manuel Kurulum:\n\n1. Safari alt menüsünden "Paylaş" (□↗) butonuna tıklayın\n2. "Ana Ekrana Ekle" (📱) seçeneğini seçin\n3. "Ekle" butonuna tıklayın\n\nKurulum tamamlandı! 🎉');
+                }
             } else if (platform === 'huawei') {
-                // Show Huawei instructions  
-                alert('Huawei Kurulum:\n\n1. Tarayıcı menüsüne tıklayın\n2. "Ana ekrana ekle" seçeneğini bulun\n3. Uygulama adını onaylayın\n4. Kurulumu tamamlayın\n\nKurulum tamamlandı! 🎉');
+                // Huawei için otomatik adım rehberi
+                if (confirm('📱 Huawei Kurulum Başlıyor!\n\n✅ "Tamam" = Adım adım rehber\n❌ "İptal" = Manuel talimatlar')) {
+                    setTimeout(() => {
+                        alert('📱 ADIM 1/4\n\n👆 Tarayıcının SAĞ ÜST köşesindeki MENÜ butonuna tıklayın\n\n(⋮ üç nokta ikonu)');
+                    }, 500);
+                    
+                    setTimeout(() => {
+                        alert('📱 ADIM 2/4\n\n👆 Açılan menüden "ANA EKRANA EKLE" veya "BOOKMARK EKLE" seçeneğini bulun\n\n📱 Telefon ikonu ile gösterilir');
+                    }, 4000);
+                    
+                    setTimeout(() => {
+                        alert('📱 ADIM 3/4\n\n👆 Uygulama adını onaylayın: "SoloBet"\n\n👆 "EKLE" veya "ONAYLA" butonuna tıklayın');
+                    }, 8000);
+                    
+                    setTimeout(() => {
+                        alert('🎉 ADIM 4/4 - TAMAMLANDI!\n\n✅ SoloBet ana ekranınıza eklendi!\n📱 Artık ana ekranınızdan tek tıkla erişebilirsiniz!\n\n🎯 Ana ekranda SoloBet ikonunu arayın.');
+                    }, 12000);
+                } else {
+                    alert('📱 Huawei Manuel Kurulum:\n\n1. Tarayıcı menüsüne (⋮) tıklayın\n2. "Ana ekrana ekle" seçeneğini bulun\n3. Uygulama adını onaylayın\n4. Kurulumu tamamlayın\n\nKurulum tamamlandı! 🎉');
+                }
             } else {
-                // Fallback for other platforms
-                alert('Manuel Kurulum:\n\nTarayıcınızın menüsünden "Ana ekrana ekle" veya "Bookmark ekle" seçeneğini kullanarak siteyi ana ekranınıza ekleyebilirsiniz.');
+                // Diğer platformlar için genel rehber
+                if (confirm('📱 Kurulum Başlıyor!\n\n✅ "Tamam" = Adım adım rehber\n❌ "İptal" = İptal et')) {
+                    setTimeout(() => {
+                        alert('📱 ADIM 1/3\n\n👆 Tarayıcınızın MENÜ butonunu bulun\n\n(Genellikle ⋮ üç nokta veya ☰ hamburger menü)');
+                    }, 500);
+                    
+                    setTimeout(() => {
+                        alert('📱 ADIM 2/3\n\n👆 Menüden şu seçeneklerden birini arayın:\n• "Ana ekrana ekle"\n• "Bookmark ekle"\n• "Kısayol oluştur"\n• "Home screen\'e ekle"');
+                    }, 4000);
+                    
+                    setTimeout(() => {
+                        alert('🎉 ADIM 3/3 - TAMAMLANDI!\n\n✅ SoloBet ana ekranınıza eklendi!\n📱 Artık ana ekranınızdan tek tıkla erişebilirsiniz!');
+                    }, 8000);
+                } else {
+                    alert('📱 Manuel Kurulum:\n\nTarayıcınızın menüsünden "Ana ekrana ekle" veya "Bookmark ekle" seçeneğini kullanarak siteyi ana ekranınıza ekleyebilirsiniz.');
+                }
             }
         }
 
