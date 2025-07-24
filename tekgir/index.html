@@ -474,7 +474,7 @@
                     <form id="addUrlForm">
                         <div class="form-group">
                             <label class="form-label">URL Adresi</label>
-                            <input type="text" class="form-input" id="newUrl" placeholder="örn: solobet123.com" required>
+                            <input type="text" class="form-input" id="newUrl" placeholder="örn: sahabet1234.com" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Durum</label>
@@ -720,8 +720,29 @@
         }
 
         async function sendTestNotification() {
+            // Önce tarayıcı bildirimi göster
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('🎉 SoloBet Test', {
+                    body: 'Admin panelden test bildirimi başarılı!',
+                    icon: '/favicon.ico',
+                    tag: 'solobet-admin-test'
+                });
+            } else if ('Notification' in window) {
+                // İzin yoksa iste
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        new Notification('🎉 SoloBet Test', {
+                            body: 'Admin panelden test bildirimi başarılı!',
+                            icon: '/favicon.ico',
+                            tag: 'solobet-admin-test'
+                        });
+                    }
+                });
+            }
+            
+            // Sonra Firebase'e kaydet
             const notification = {
-                title: 'Test Bildirimi',
+                title: 'SoloBet Test',
                 message: 'Admin panelden gönderilen test bildirimi.',
                 timestamp: Date.now(),
                 sent: true
@@ -729,7 +750,7 @@
 
             try {
                 await database.ref('notifications').push(notification);
-                showAlert('notifAlert', 'Test bildirimi gönderildi!', 'success');
+                showAlert('notifAlert', 'Test bildirimi gönderildi ve görüntülendi!', 'success');
             } catch (error) {
                 showAlert('notifAlert', 'Hata: ' + error.message, 'error');
             }
