@@ -11,14 +11,6 @@
     <meta name="apple-mobile-web-app-title" content="SoloBet">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
-    
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2N007WSPVB"></script>
-    
     <style>
         * {
             margin: 0;
@@ -30,14 +22,32 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #FF9500 0%, #FF6B35 50%, #FFB84D 100%);
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #4A6741 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Yıldız animasyonları */
+        .star {
+            position: absolute;
+            color: #FFD700;
+            font-size: 16px;
+            animation: twinkle 2s infinite alternate;
+            z-index: 1;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
         
         .header {
@@ -57,8 +67,6 @@
             padding: 15px 25px;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
         }
         
         .header h1 {
@@ -72,53 +80,147 @@
             opacity: 0.9;
         }
         
-        .status-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        /* Güncel Giriş Butonu */
+        .login-button {
+            background: linear-gradient(135deg, #27AE60, #2ECC71);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 25px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
         }
         
-        .current-url {
+        .login-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(39, 174, 96, 0.4);
+        }
+        
+        .login-button::before {
+            content: "✨";
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+        
+        /* Sıradaki Adresler Bölümü */
+        .addresses-section {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.8));
+            border-radius: 25px;
+            padding: 30px;
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .section-title {
+            color: #2ECC71;
+            font-size: 2rem;
+            font-weight: 700;
             text-align: center;
             margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .url-display {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
+        .section-title::before {
+            content: "✨";
+            margin-right: 15px;
+        }
+        
+        /* URL Listesi */
+        .url-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .url-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            padding: 20px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #FF6B35;
-            margin: 15px 0;
-            word-break: break-all;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
         }
         
-        .status {
+        .url-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .url-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
         }
         
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #28a745;
-            animation: pulse 2s infinite;
+        .url-text::before {
+            content: "▶";
+            margin-right: 15px;
+            color: #2ECC71;
+            font-size: 1rem;
         }
         
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        /* Status Badge'leri */
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
+            min-width: 80px;
+            text-align: center;
         }
         
+        .status-badge.active {
+            background: linear-gradient(135deg, #27AE60, #2ECC71);
+            color: white;
+            border-color: #1E8449;
+            box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
+            animation: pulse-green 2s infinite;
+        }
+        
+        .status-badge.next {
+            background: linear-gradient(135deg, #F39C12, #F1C40F);
+            color: #2C3E50;
+            border-color: #D68910;
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+        }
+        
+        .status-badge.inactive {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: white;
+            border-color: #A93226;
+        }
+        
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 15px rgba(39, 174, 96, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(39, 174, 96, 0.8); }
+            100% { box-shadow: 0 0 15px rgba(39, 174, 96, 0.5); }
+        }
+        
+        /* Ana Buton */
         .main-button {
             background: linear-gradient(135deg, #FF6B35, #FF9500);
             color: white;
@@ -139,203 +241,7 @@
             box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
         }
         
-        .next-urls {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #e9ecef;
-        }
-
-        .url-queue {
-            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
-            border-radius: 15px;
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .queue-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .queue-item:hover {
-            transform: translateX(5px);
-            background: rgba(255,255,255,0.15);
-        }
-
-        .queue-url {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: white;
-            display: flex;
-            align-items: center;
-        }
-
-        .queue-url::before {
-            content: "▶";
-            margin-right: 10px;
-            color: #FF9500;
-            font-size: 0.8rem;
-        }
-
-        .queue-status {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            border: 2px solid transparent;
-        }
-
-        .queue-status.active {
-            background: #28a745;
-            color: white;
-            border-color: #1e7e34;
-            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
-        }
-
-        .queue-status.next {
-            background: #ffc107;
-            color: #333;
-            border-color: #e0a800;
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-        }
-
-        .queue-status.inactive {
-            background: #dc3545;
-            color: white;
-            border-color: #bd2130;
-        }
-
-        .queue-status.loading {
-            background: #17a2b8;
-            color: white;
-            border-color: #138496;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .feature-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        
-        .feature-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .feature-desc {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .notification-settings {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .notification-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 34px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #FF6B35;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        .update-info {
-            text-align: center;
-            color: white;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .offline-indicator {
-            background: #dc3545;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
+        /* Responsive */
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -345,19 +251,34 @@
                 font-size: 2rem;
             }
             
-            .status-card, .notification-settings {
+            .addresses-section {
                 padding: 20px;
             }
             
-            .queue-item {
+            .url-item {
                 flex-direction: column;
                 text-align: center;
                 gap: 10px;
+                padding: 15px;
+            }
+            
+            .url-text {
+                font-size: 1.1rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Yıldızlar -->
+    <div class="star" style="top: 10%; left: 5%;">✨</div>
+    <div class="star" style="top: 20%; right: 10%; animation-delay: 0.5s;">✨</div>
+    <div class="star" style="top: 60%; left: 15%; animation-delay: 1s;">✨</div>
+    <div class="star" style="top: 80%; right: 20%; animation-delay: 1.5s;">✨</div>
+    <div class="star" style="top: 40%; left: 80%; animation-delay: 2s;">✨</div>
+    <div class="star" style="top: 70%; left: 70%; animation-delay: 0.8s;">✨</div>
+    <div class="star" style="top: 30%; left: 30%; animation-delay: 1.2s;">✨</div>
+    <div class="star" style="top: 90%; right: 40%; animation-delay: 1.8s;">✨</div>
+
     <div class="container">
         <div class="header">
             <div class="logo">
@@ -371,502 +292,106 @@
             <p>Her zaman güncel SoloBet adresine ulaşın</p>
         </div>
 
-        <div class="offline-indicator" id="offlineIndicator">
-            📵 İnternet bağlantısı yok - Önbellek kullanılıyor
-        </div>
+        <!-- Güncel Giriş Butonu -->
+        <button class="login-button" onclick="goToSite()">
+            GÜNCEL GİRİŞ İÇİN TIKLA
+        </button>
 
-        <div class="status-card">
-            <div class="current-url">
-                <h3>🎯 Güncel Adres</h3>
-                <div class="url-display" id="currentUrl">
-                    Yükleniyor...
+        <!-- Sıradaki Adresler -->
+        <div class="addresses-section">
+            <h3 class="section-title">Sıradaki Adresler</h3>
+            <div class="url-list" id="urlList">
+                <div class="url-item">
+                    <span class="url-text">sahabet1281.com</span>
+                    <span class="status-badge active">Aktif</span>
                 </div>
-                <div class="status">
-                    <div class="status-indicator" id="statusIndicator"></div>
-                    <span id="statusText">Adres kontrol ediliyor...</span>
+                <div class="url-item">
+                    <span class="url-text">sahabet1282.com</span>
+                    <span class="status-badge next">Sıradaki</span>
                 </div>
-                <button class="main-button" onclick="goToSite()">
-                    🚀 SoloBet'e Git
-                </button>
-            </div>
-            
-            <!-- Sıradaki Adresler -->
-            <div class="next-urls">
-                <h3 style="color: #28a745; margin-bottom: 20px; text-align: center;">📋 Sıradaki Adresler</h3>
-                <div class="url-queue" id="urlQueue">
-                    <div class="queue-item">
-                        <span class="queue-url">Yükleniyor...</span>
-                        <span class="queue-status loading">Kontrol ediliyor</span>
-                    </div>
+                <div class="url-item">
+                    <span class="url-text">sahabet1283.com</span>
+                    <span class="status-badge inactive">Pasif</span>
+                </div>
+                <div class="url-item">
+                    <span class="url-text">sahabet1284.com</span>
+                    <span class="status-badge inactive">Pasif</span>
+                </div>
+                <div class="url-item">
+                    <span class="url-text">sahabet1285.com</span>
+                    <span class="status-badge inactive">Pasif</span>
+                </div>
+                <div class="url-item">
+                    <span class="url-text">sahabet1289.com</span>
+                    <span class="status-badge inactive">Pasif</span>
+                </div>
+                <div class="url-item">
+                    <span class="url-text">sahabet1290.com</span>
+                    <span class="status-badge inactive">Pasif</span>
+                </div>
+                <div class="url-item">
+                    <span class="url-text">sahabet1291.com</span>
+                    <span class="status-badge inactive">Pasif</span>
                 </div>
             </div>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🔄</div>
-                <div class="feature-title">Otomatik Güncelleme</div>
-                <div class="feature-desc">Adresler otomatik kontrol edilir ve güncel olanına yönlendirilirsiniz</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔔</div>
-                <div class="feature-title">Anında Bildirim</div>
-                <div class="feature-desc">Yeni adres geldiğinde hemen haberdar olursunuz</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title">Uygulama Gibi</div>
-                <div class="feature-desc">Ana ekrana ekleyince gerçek uygulama gibi çalışır</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛡️</div>
-                <div class="feature-title">Güvenli Erişim</div>
-                <div class="feature-desc">Sadece güvenli ve aktif adreslere yönlendirilirsiniz</div>
-            </div>
-        </div>
-
-        <div class="notification-settings">
-            <h3 style="margin-bottom: 20px;">🔔 Bildirim Ayarları</h3>
-            
-            <div class="notification-toggle">
-                <div>
-                    <strong>Adres Değişikliği Bildirimi</strong>
-                    <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9rem;">Yeni adres geldiğinde bildirim al</p>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="addressNotifications" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="notification-toggle">
-                <div>
-                    <strong>Günlük Hatırlatma</strong>
-                    <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9rem;">Her gün güncel adresi kontrol et</p>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="dailyReminder">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <div class="update-info">
-            <p>📊 Son güncelleme: <span id="lastUpdate">Yükleniyor...</span></p>
-            <p>🔄 Sonraki kontrol: <span id="nextCheck">5 dakika sonra</span></p>
-            <p>👥 Aktif kullanıcı: <span id="activeUserCount">Yükleniyor...</span></p>
         </div>
     </div>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBGCbLgFY5u7TUs7njM2PAqUyRTCQuIx6E",
-            authDomain: "guncelsolobet.firebaseapp.com",
-            databaseURL: "https://guncelsolobet-default-rtdb.europe-west1.firebasedatabase.app/",
-            projectId: "guncelsolobet",
-            storageBucket: "guncelsolobet.firebasestorage.app",
-            messagingSenderId: "282558930683",
-            appId: "1:282558930683:web:80751459579a9c31d15a5e",
-            measurementId: "G-2N007WSPVB"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Google Analytics
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-2N007WSPVB');
-
-        // Global Variables
-        let isOnline = navigator.onLine;
-        let availableUrls = ['solobet1.com', 'solobet2.com', 'solobet3.com'];
-        let urlsWithStatus = null; // Yeni: Status bilgili URL'ler
-        let currentUrlIndex = 0;
-
-        // Load URLs from Firebase with Status Support
-        function loadUrlsFromFirebase() {
-            // Yeni veri yapısını dinle (urlsData)
-            database.ref('urlsData').on('value', (snapshot) => {
-                const urlsData = snapshot.val();
-                if (urlsData && Array.isArray(urlsData) && urlsData.length > 0) {
-                    urlsWithStatus = urlsData;
-                    
-                    // URL'leri status'e göre sırala
-                    const sortedUrls = [...urlsData].sort((a, b) => {
-                        if (a.status === 'active') return -1;
-                        if (b.status === 'active') return 1;
-                        if (a.status === 'next') return -1;
-                        if (b.status === 'next') return 1;
-                        return a.order - b.order;
-                    });
-                    
-                    availableUrls = sortedUrls.map(item => item.url);
-                    
-                    // Aktif URL'yi bul ve currentUrlIndex'i ayarla
-                    const activeUrl = urlsData.find(item => item.status === 'active');
-                    if (activeUrl) {
-                        currentUrlIndex = availableUrls.indexOf(activeUrl.url);
-                    } else {
-                        currentUrlIndex = 0;
-                    }
-                    
-                    updateCurrentUrl();
-                    updateUrlQueue();
-                } else {
-                    // Fallback - eski veri yapısını dinle
-                    database.ref('urls').once('value', (oldSnapshot) => {
-                        const urls = oldSnapshot.val();
-                        if (urls && Array.isArray(urls) && urls.length > 0) {
-                            availableUrls = urls;
-                            // Eski veri yapısını yeni formata çevir
-                            urlsWithStatus = urls.map((url, index) => ({
-                                url: url,
-                                status: index === 0 ? 'active' : index === 1 ? 'next' : 'inactive',
-                                order: index + 1,
-                                addedAt: Date.now()
-                            }));
-                            updateCurrentUrl();
-                            updateUrlQueue();
-                        }
-                    });
-                }
-            });
-        }
-
-        // Check URL status (simulated)
-        async function checkUrlStatus(url) {
-            try {
-                return Math.random() > 0.3; // 70% success rate
-            } catch (error) {
-                return false;
-            }
-        }
-
-        function updateCurrentUrl() {
-            const urlDisplay = document.getElementById('currentUrl');
-            const statusText = document.getElementById('statusText');
-            const statusIndicator = document.getElementById('statusIndicator');
-            
-            if (!isOnline) {
-                statusText.textContent = 'Çevrimdışı - Önbellek kullanılıyor';
-                statusIndicator.style.backgroundColor = '#ffc107';
-                return;
-            }
-
-            if (availableUrls.length === 0) {
-                urlDisplay.textContent = 'Adres bulunamadı';
-                statusText.textContent = 'Henüz adres eklenmemiş';
-                statusIndicator.style.backgroundColor = '#dc3545';
-                return;
-            }
-
-            // Aktif URL'yi göster
-            let currentUrl;
-            if (urlsWithStatus) {
-                const activeUrl = urlsWithStatus.find(item => item.status === 'active');
-                currentUrl = activeUrl ? activeUrl.url : availableUrls[0];
-            } else {
-                currentUrl = availableUrls[currentUrlIndex];
-            }
-            
-            urlDisplay.textContent = currentUrl;
-            
-            checkUrlStatus(currentUrl).then(isActive => {
-                if (isActive) {
-                    statusText.textContent = 'Aktif ve Erişilebilir';
-                    statusIndicator.style.backgroundColor = '#28a745';
-                } else {
-                    // Sıradaki URL'ye geç
-                    if (urlsWithStatus) {
-                        const nextUrl = urlsWithStatus.find(item => item.status === 'next');
-                        if (nextUrl) {
-                            statusText.textContent = 'Sıradaki adrese yönlendiriliyor...';
-                            statusIndicator.style.backgroundColor = '#ffc107';
-                            
-                            sendNotification('SoloBet Adres Güncellendi', `Yeni adres: ${nextUrl.url}`);
-                            
-                            setTimeout(() => {
-                                updateCurrentUrl();
-                            }, 2000);
-                        } else {
-                            statusText.textContent = 'Yedek adres bulunamadı';
-                            statusIndicator.style.backgroundColor = '#dc3545';
-                        }
-                    } else {
-                        // Eski sistem
-                        currentUrlIndex = (currentUrlIndex + 1) % availableUrls.length;
-                        statusText.textContent = 'Yeni adrese yönlendiriliyor...';
-                        statusIndicator.style.backgroundColor = '#ffc107';
-                        
-                        sendNotification('SoloBet Adres Güncellendi', `Yeni adres: ${availableUrls[currentUrlIndex]}`);
-                        
-                        setTimeout(() => {
-                            updateCurrentUrl();
-                        }, 2000);
-                    }
-                }
-            });
-            
-            updateUrlQueue();
-        }
-
-        function updateUrlQueue() {
-            const queueContainer = document.getElementById('urlQueue');
-            queueContainer.innerHTML = '';
-            
-            if (!urlsWithStatus || urlsWithStatus.length === 0) {
-                if (availableUrls.length === 0) {
-                    queueContainer.innerHTML = '<div class="queue-item"><span class="queue-url">Henüz adres eklenmemiş</span><span class="queue-status loading">Bekleniyor</span></div>';
-                } else {
-                    // Fallback: Eski sistem
-                    availableUrls.forEach((url, index) => {
-                        const queueItem = document.createElement('div');
-                        queueItem.className = 'queue-item';
-                        
-                        let status = '';
-                        let statusClass = '';
-                        
-                        if (index === currentUrlIndex) {
-                            status = 'Aktif';
-                            statusClass = 'active';
-                        } else if (index === (currentUrlIndex + 1) % availableUrls.length) {
-                            status = 'Sıradaki';
-                            statusClass = 'next';
-                        } else {
-                            const isWorking = Math.random() > 0.4;
-                            status = isWorking ? 'Aktif' : 'Pasif';
-                            statusClass = isWorking ? 'active' : 'inactive';
-                        }
-                        
-                        queueItem.innerHTML = `
-                            <span class="queue-url">${url}</span>
-                            <span class="queue-status ${statusClass}">${status}</span>
-                        `;
-                        
-                        queueContainer.appendChild(queueItem);
-                    });
-                }
-                return;
-            }
-            
-            // Yeni sistem: Status bilgili URL'ler
-            const sortedUrls = [...urlsWithStatus].sort((a, b) => {
-                // Önce aktif, sonra sıradaki, sonra pasifler
-                const statusOrder = { 'active': 1, 'next': 2, 'inactive': 3 };
-                if (statusOrder[a.status] !== statusOrder[b.status]) {
-                    return statusOrder[a.status] - statusOrder[b.status];
-                }
-                return a.order - b.order;
-            });
-            
-            sortedUrls.forEach((urlData) => {
-                const queueItem = document.createElement('div');
-                queueItem.className = 'queue-item';
-                
-                let status = '';
-                let statusClass = '';
-                
-                switch(urlData.status) {
-                    case 'active':
-                        status = 'Aktif';
-                        statusClass = 'active';
-                        break;
-                    case 'next':
-                        status = 'Sıradaki';
-                        statusClass = 'next';
-                        break;
-                    case 'inactive':
-                    default:
-                        status = 'Pasif';
-                        statusClass = 'inactive';
-                        break;
-                }
-                
-                queueItem.innerHTML = `
-                    <span class="queue-url">${urlData.url}</span>
-                    <span class="queue-status ${statusClass}">${status}</span>
-                `;
-                
-                queueContainer.appendChild(queueItem);
-            });
-        }
-
-        function sendNotification(title, message) {
-            const addressNotifications = document.getElementById('addressNotifications').checked;
-            
-            if (addressNotifications && 'Notification' in window && Notification.permission === 'granted') {
-                new Notification(title, {
-                    body: message,
-                    icon: '/android-chrome-192x192.png'
-                });
-            }
-        }
-
+        // Basit JavaScript functionality
         function goToSite() {
-            const currentUrl = document.getElementById('currentUrl').textContent;
-            
-            if (currentUrl === 'Yükleniyor...') {
-                alert('Adres yükleniyor, lütfen bekleyin...');
-                return;
+            // Aktif URL'yi bul
+            const activeUrlElement = document.querySelector('.url-item .status-badge.active');
+            if (activeUrlElement) {
+                const urlElement = activeUrlElement.parentElement.querySelector('.url-text');
+                const activeUrl = urlElement.textContent.trim();
+                window.open(`https://${activeUrl}`, '_blank');
+            } else {
+                alert('Aktif adres bulunamadı!');
             }
-            
-            // Analytics tracking
-            gtag('event', 'site_visit', {
-                'url': currentUrl,
-                'timestamp': Date.now()
-            });
-            
-            // Update visit count in Firebase
-            database.ref('stats/visits').transaction((currentVisits) => {
-                return (currentVisits || 0) + 1;
-            });
-            
-            window.open(`https://${currentUrl}`, '_blank');
         }
 
-        function updateTimestamps() {
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('tr-TR');
-            
-            const nextCheck = new Date(now.getTime() + 5 * 60000);
-            document.getElementById('nextCheck').textContent = nextCheck.toLocaleTimeString('tr-TR');
-        }
+        // Dinamik yıldız ekleme
+        function createRandomStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.innerHTML = '✨';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(star);
 
-        // Real-time user count
-        function updateUserCount() {
-            const userId = generateUserId();
-            
-            database.ref('users/' + userId).set({
-                lastSeen: Date.now(),
-                online: true
-            });
-
-            database.ref('users').on('value', (snapshot) => {
-                const users = snapshot.val();
-                if (users) {
-                    const onlineUsers = Object.values(users).filter(user => 
-                        Date.now() - user.lastSeen < 300000
-                    ).length;
-                    document.getElementById('activeUserCount').textContent = onlineUsers;
-                }
-            });
-        }
-
-        function generateUserId() {
-            let userId = localStorage.getItem('solobetUserId');
-            if (!userId) {
-                userId = 'user_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('solobetUserId', userId);
-            }
-            return userId;
-        }
-
-        // Listen for notifications from admin
-        function listenForNotifications() {
-            database.ref('notifications').orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
-                const notification = snapshot.val();
-                if (notification && notification.sent && Date.now() - notification.timestamp < 60000) {
-                    sendNotification(notification.title, notification.message);
-                }
-            });
-        }
-
-        // Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('Service Worker registered');
-                })
-                .catch(error => {
-                    console.log('Service Worker registration failed');
-                });
-        }
-
-        // Event Listeners
-        window.addEventListener('online', () => {
-            isOnline = true;
-            document.getElementById('offlineIndicator').style.display = 'none';
-            updateCurrentUrl();
-        });
-
-        window.addEventListener('offline', () => {
-            isOnline = false;
-            document.getElementById('offlineIndicator').style.display = 'block';
-            updateCurrentUrl();
-        });
-
-        // Settings persistence
-        document.getElementById('addressNotifications').addEventListener('change', function() {
-            const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
-            settings.addressNotifications = this.checked;
-            localStorage.setItem('solobetSettings', JSON.stringify(settings));
-        });
-
-        document.getElementById('dailyReminder').addEventListener('change', function() {
-            const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
-            settings.dailyReminder = this.checked;
-            localStorage.setItem('solobetSettings', JSON.stringify(settings));
-        });
-
-        // Initialize app
-        window.addEventListener('load', () => {
-            // Request notification permission
-            if ('Notification' in window) {
-                if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(permission => {
-                        console.log('Bildirim izni:', permission);
-                    });
-                }
-                console.log('Mevcut bildirim izni:', Notification.permission);
-            }
-
-            // Load saved settings
-            const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
-            if (settings.addressNotifications !== undefined) {
-                document.getElementById('addressNotifications').checked = settings.addressNotifications;
-            }
-            if (settings.dailyReminder !== undefined) {
-                document.getElementById('dailyReminder').checked = settings.dailyReminder;
-            }
-
-            // Initialize Firebase listeners
-            loadUrlsFromFirebase();
-            listenForNotifications();
-            
-            // Initialize app
-            updateCurrentUrl();
-            updateTimestamps();
-            updateUserCount();
-
-            // Check offline status
-            if (!isOnline) {
-                document.getElementById('offlineIndicator').style.display = 'block';
-            }
-
-            // Auto-update intervals
-            setInterval(() => {
-                if (isOnline) {
-                    updateCurrentUrl();
-                    updateTimestamps();
-                }
-            }, 5 * 60 * 1000);
-
-            // Bildirim test
+            // 5 saniye sonra yıldızı kaldır
             setTimeout(() => {
-                if (Notification.permission === 'granted') {
-                    new Notification('Test', { body: 'Bildirim sistemi çalışıyor!' });
-                }
-            }, 3000);
+                star.remove();
+            }, 5000);
+        }
 
-            // Analytics page view
-            gtag('event', 'page_view', {
-                page_title: 'SoloBet Güncel Adres',
-                page_location: 'https://guncelsolobet.com'
+        // Her 3 saniyede bir yeni yıldız ekle
+        setInterval(createRandomStar, 3000);
+
+        // URL durumlarını güncelleme simülasyonu
+        function updateUrlStatuses() {
+            const urlItems = document.querySelectorAll('.url-item');
+            const statuses = ['active', 'next', 'inactive'];
+            
+            urlItems.forEach((item, index) => {
+                const badge = item.querySelector('.status-badge');
+                let newStatus;
+                
+                if (index === 0) newStatus = 'active';
+                else if (index === 1) newStatus = 'next';
+                else newStatus = 'inactive';
+                
+                badge.className = `status-badge ${newStatus}`;
+                badge.textContent = newStatus === 'active' ? 'Aktif' : 
+                                   newStatus === 'next' ? 'Sıradaki' : 'Pasif';
             });
+        }
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', () => {
+            updateUrlStatuses();
         });
     </script>
 </body>
