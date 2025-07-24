@@ -566,7 +566,12 @@
             if ('Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission();
             }
-
+// Bildirim test
+setTimeout(() => {
+    if (Notification.permission === 'granted') {
+        new Notification('Test', { body: 'Bildirim sistemi çalışıyor!' });
+    }
+}, 3000);
             // Load saved settings
             const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
             if (settings.addressNotifications !== undefined) {
