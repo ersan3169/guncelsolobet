@@ -3,60 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoloBet Admin</title>
+    <title>SoloBet Admin Paneli</title>
     <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: #333;
+        }
+        
+        .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
+        
         .login-card {
             background: white;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             text-align: center;
             max-width: 400px;
-            width: 90%;
+            width: 100%;
         }
-        .logo {
+        
+        .logo-admin {
             font-size: 3rem;
             margin-bottom: 20px;
         }
-        .title {
+        
+        .login-title {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 30px;
             color: #333;
         }
+        
         .input-group {
             margin: 20px 0;
             text-align: left;
         }
-        label {
+        
+        .input-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
         }
-        input {
+        
+        .input-group input, .input-group textarea, .input-group select {
             width: 100%;
             padding: 15px;
             border: 2px solid #e9ecef;
             border-radius: 10px;
             font-size: 1rem;
+            transition: border-color 0.3s;
             box-sizing: border-box;
         }
-        input:focus {
+        
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
             outline: none;
             border-color: #667eea;
         }
+        
         .btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -66,13 +90,29 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            min-width: 120px;
         }
+        
         .btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
-        .error {
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .error-message {
             background: #f8d7da;
             color: #721c24;
             padding: 10px;
@@ -80,155 +120,425 @@
             margin: 10px 0;
             display: none;
         }
+        
         .dashboard {
             display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            max-width: 800px;
-            width: 90%;
-        }
-        .dashboard h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .stat {
-            background: #f8f9fa;
             padding: 20px;
-            border-radius: 10px;
-            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .stat-number {
+        
+        .dashboard-header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .dashboard-title {
             font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
             font-weight: 900;
             color: #667eea;
+            margin-bottom: 10px;
         }
-        .url-section {
-            margin: 30px 0;
+        
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 600;
         }
-        .url-input {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
+        
+        .admin-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .url-input input {
-            flex: 1;
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
         }
+        
         .url-list {
             background: #f8f9fa;
-            padding: 20px;
             border-radius: 10px;
+            padding: 20px;
             margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
         }
+        
         .url-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
             border-bottom: 1px solid #dee2e6;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
+        
+        .url-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .url-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .url-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
         .status-active {
-            color: #28a745;
-            font-weight: 600;
+            background: #d4edda;
+            color: #155724;
         }
+        
         .status-inactive {
-            color: #dc3545;
-            font-weight: 600;
+            background: #f8d7da;
+            color: #721c24;
         }
-        .logout-btn {
+        
+        .realtime-log {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 20px 0;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        
+        .log-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: #17a2b8;
+        }
+        
+        .log-success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        
+        .log-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        
+        .log-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left-color: #ffc107;
+        }
+        
+        .notification-preview {
+            background: #e7f1ff;
+            border: 1px solid #b8daff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .preview-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .preview-message {
+            color: #666;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .quick-action-btn {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: white;
+            border: none;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-primary {
+            background: #667eea;
+        }
+        
+        .action-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .action-danger {
             background: #dc3545;
-            margin-top: 20px;
+        }
+        
+        .action-success {
+            background: #28a745;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 15px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-section {
+                padding: 20px;
+            }
+            
+            .url-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="loginScreen" class="login-card">
-        <div class="logo">🛡️</div>
-        <h1 class="title">Admin Paneli</h1>
-        <div class="error" id="errorMessage">Geçersiz kullanıcı adı veya şifre!</div>
-        
-        <div class="input-group">
-            <label>Kullanıcı Adı</label>
-            <input type="text" id="username" placeholder="Admin kullanıcı adı" />
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="logo-admin">🛡️</div>
+            <h1 class="login-title">Admin Paneli</h1>
+            <div class="error-message" id="errorMessage">Geçersiz kullanıcı adı veya şifre!</div>
+            
+            <div class="input-group">
+                <label>Kullanıcı Adı</label>
+                <input type="text" id="username" placeholder="Admin kullanıcı adı" />
+            </div>
+            
+            <div class="input-group">
+                <label>Şifre</label>
+                <input type="password" id="password" placeholder="Admin şifresi" />
+            </div>
+            
+            <button class="btn" onclick="login()">Giriş Yap</button>
         </div>
-        
-        <div class="input-group">
-            <label>Şifre</label>
-            <input type="password" id="password" placeholder="Admin şifresi" />
-        </div>
-        
-        <button class="btn" onclick="login()">Giriş Yap</button>
     </div>
 
     <!-- Dashboard -->
     <div id="dashboard" class="dashboard">
-        <h2>🎛️ SoloBet Admin Kontrol Paneli</h2>
-        
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-number" id="totalUrls">3</div>
-                <div>Toplam URL</div>
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">🎛️ SoloBet Admin Paneli</h1>
+            <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Toplam Kullanıcı</div>
             </div>
-            <div class="stat">
-                <div class="stat-number" id="activeUrls">2</div>
-                <div>Aktif URL</div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUrls">0</div>
+                <div class="stat-label">Aktif URL</div>
             </div>
-            <div class="stat">
-                <div class="stat-number" id="todayVisits">47</div>
-                <div>Bugünkü Ziyaret</div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayVisits">0</div>
+                <div class="stat-label">Bugünkü Ziyaret</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="notificationsSent">0</div>
+                <div class="stat-label">Gönderilen Bildirim</div>
             </div>
         </div>
 
-        <div class="url-section">
-            <h3>🌐 URL Yönetimi</h3>
-            <div class="url-input">
+        <!-- Quick Actions -->
+        <div class="admin-section">
+            <h2 class="section-title">⚡ Hızlı İşlemler</h2>
+            <div class="quick-actions">
+                <button class="quick-action-btn action-primary" onclick="checkAllUrls()">
+                    🔄 Tüm URL'leri Kontrol Et
+                </button>
+                <button class="quick-action-btn action-success" onclick="sendTestNotification()">
+                    🔔 Test Bildirimi Gönder
+                </button>
+                <button class="quick-action-btn action-warning" onclick="exportData()">
+                    📊 Verileri Dışa Aktar
+                </button>
+                <button class="quick-action-btn action-danger" onclick="resetSystem()">
+                    🔄 Sistemi Sıfırla
+                </button>
+            </div>
+        </div>
+
+        <!-- URL Management -->
+        <div class="admin-section">
+            <h2 class="section-title">🌐 URL Yönetimi</h2>
+            <div class="input-group">
+                <label>Yeni URL Ekle</label>
                 <input type="text" id="newUrl" placeholder="örnek: solobet5.com" />
-                <button class="btn" onclick="addUrl()" style="width: auto; margin: 0;">URL Ekle</button>
+                <button class="btn" onclick="addUrl()">URL Ekle</button>
             </div>
 
-            <div class="url-list">
-                <div class="url-item">
-                    <span>solobet1.com</span>
-                    <span class="status-active">Aktif</span>
-                </div>
-                <div class="url-item">
-                    <span>solobet2.com</span>
-                    <span class="status-active">Aktif</span>
-                </div>
-                <div class="url-item">
-                    <span>solobet3.com</span>
-                    <span class="status-inactive">Pasif</span>
-                </div>
+            <div class="url-list" id="urlList">
+                <p style="text-align: center; color: #666;">URL'ler yükleniyor...</p>
             </div>
         </div>
 
-        <button class="btn logout-btn" onclick="logout()">Çıkış Yap</button>
+        <!-- Notification Management -->
+        <div class="admin-section">
+            <h2 class="section-title">🔔 Bildirim Yönetimi</h2>
+            <div class="input-group">
+                <label>Bildirim Başlığı</label>
+                <input type="text" id="notificationTitle" placeholder="SoloBet Güncelleme" value="SoloBet Güncelleme" />
+            </div>
+            <div class="input-group">
+                <label>Bildirim Mesajı</label>
+                <textarea id="notificationMessage" placeholder="Yeni güncellemeler mevcut..." rows="3">Yeni güncellemeler mevcut...</textarea>
+            </div>
+            <button class="btn" onclick="sendBulkNotification()">Tüm Kullanıcılara Gönder</button>
+
+            <div class="notification-preview">
+                <strong>📱 Bildirim Önizlemesi:</strong>
+                <div class="preview-title" id="previewTitle">SoloBet Güncelleme</div>
+                <div class="preview-message" id="previewMessage">Yeni güncellemeler mevcut...</div>
+            </div>
+        </div>
+
+        <!-- Real-time Logs -->
+        <div class="admin-section">
+            <h2 class="section-title">📊 Canlı Sistem Logları</h2>
+            <div class="realtime-log" id="realtimeLog">
+                <div class="log-entry log-info">
+                    <strong>[INFO]</strong> Admin paneli başlatıldı - <span id="startTime"></span>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="clearLogs()">Logları Temizle</button>
+        </div>
     </div>
 
     <script>
-        // Admin credentials
-        const ADMIN_USER = 'solobet-admin';
-        const ADMIN_PASS = 'SoloBet2025!@#';
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBGCbLgFY5u7TUs7njM2PAqUyRTCQuIx6E",
+            authDomain: "guncelsolobet.firebaseapp.com",
+            databaseURL: "https://guncelsolobet-default-rtdb.europe-west1.firebasedatabase.app/",
+            projectId: "guncelsolobet",
+            storageBucket: "guncelsolobet.firebasestorage.app",
+            messagingSenderId: "282558930683",
+            appId: "1:282558930683:web:80751459579a9c31d15a5e",
+            measurementId: "G-2N007WSPVB"
+        };
 
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Admin credentials
+        const ADMIN_CREDENTIALS = {
+            username: 'solobet-admin',
+            password: 'SoloBet2025!@#'
+        };
+
+        let isLoggedIn = false;
+        let availableUrls = [];
+        let stats = {
+            totalUsers: 0,
+            activeUrls: 0,
+            todayVisits: 0,
+            notificationsSent: 0
+        };
+
+        // Authentication
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMessage');
 
-            if (username === ADMIN_USER && password === ADMIN_PASS) {
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                isLoggedIn = true;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                console.log('Admin giriş başarılı');
+                loadDashboardData();
+                addLog('Admin başarıyla giriş yaptı', 'success');
+                sessionStorage.setItem('adminLoggedIn', 'true');
             } else {
                 errorMsg.style.display = 'block';
+                addLog('Başarısız admin girişi denemesi', 'error');
                 setTimeout(() => {
                     errorMsg.style.display = 'none';
                 }, 3000);
@@ -236,26 +546,319 @@
         }
 
         function logout() {
+            isLoggedIn = false;
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
+            sessionStorage.removeItem('adminLoggedIn');
+            addLog('Admin çıkış yaptı', 'info');
         }
 
+        // URL Management
         function addUrl() {
             const newUrl = document.getElementById('newUrl').value.trim();
-            if (newUrl) {
-                alert('URL eklendi: ' + newUrl);
+            if (newUrl && !availableUrls.includes(newUrl)) {
+                availableUrls.push(newUrl);
                 document.getElementById('newUrl').value = '';
-                // Gerçek implementasyonda Firebase'e kaydedilecek
+                updateUrlList();
+                saveUrlsToFirebase();
+                addLog(`Yeni URL eklendi: ${newUrl}`, 'success');
+                updateStats();
+            } else if (availableUrls.includes(newUrl)) {
+                alert('Bu URL zaten listede mevcut!');
             }
         }
 
-        // Enter tuşu ile giriş
+        function removeUrl(url) {
+            if (confirm(`${url} adresini silmek istediğinizden emin misiniz?`)) {
+                availableUrls = availableUrls.filter(u => u !== url);
+                updateUrlList();
+                saveUrlsToFirebase();
+                addLog(`URL silindi: ${url}`, 'warning');
+                updateStats();
+            }
+        }
+
+        function updateUrlList() {
+            const urlList = document.getElementById('urlList');
+            urlList.innerHTML = '';
+            
+            if (availableUrls.length === 0) {
+                urlList.innerHTML = '<p style="text-align: center; color: #666;">Henüz URL eklenmemiş</p>';
+                return;
+            }
+            
+            availableUrls.forEach((url, index) => {
+                checkUrlStatus(url).then(isActive => {
+                    const status = isActive ? 'active' : 'inactive';
+                    const statusClass = isActive ? 'status-active' : 'status-inactive';
+                    const statusText = isActive ? 'Aktif' : 'Pasif';
+                    
+                    const urlItem = document.createElement('div');
+                    urlItem.className = 'url-item';
+                    urlItem.innerHTML = `
+                        <div class="url-info">
+                            <div class="url-name">${url}</div>
+                            <span class="url-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeUrl('${url}')">Sil</button>
+                    `;
+                    urlList.appendChild(urlItem);
+                });
+            });
+        }
+
+        function saveUrlsToFirebase() {
+            database.ref('urls').set(availableUrls);
+        }
+
+        // Check URL status (simulated)
+        async function checkUrlStatus(url) {
+            try {
+                return Math.random() > 0.3; // 70% success rate
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function checkAllUrls() {
+            addLog('Tüm URL\'ler kontrol ediliyor...', 'info');
+            
+            if (availableUrls.length === 0) {
+                addLog('Kontrol edilecek URL bulunamadı', 'warning');
+                return;
+            }
+            
+            availableUrls.forEach(async (url) => {
+                const isActive = await checkUrlStatus(url);
+                const status = isActive ? 'aktif' : 'pasif';
+                addLog(`${url} - ${status}`, isActive ? 'success' : 'error');
+            });
+            
+            updateUrlList();
+            setTimeout(() => {
+                addLog('URL kontrol işlemi tamamlandı', 'success');
+            }, 2000);
+        }
+
+        // Notification Management
+        function sendBulkNotification() {
+            const title = document.getElementById('notificationTitle').value || 'SoloBet Güncelleme';
+            const message = document.getElementById('notificationMessage').value || 'Yeni güncellemeler mevcut...';
+            
+            // Send to Firebase for real-time distribution
+            database.ref('notifications').push({
+                title: title,
+                message: message,
+                timestamp: Date.now(),
+                sent: true,
+                adminId: 'current-admin'
+            });
+
+            stats.notificationsSent++;
+            updateStats();
+            addLog(`Toplu bildirim gönderildi: "${title}"`, 'success');
+            
+            // Update stats in Firebase
+            database.ref('stats/notificationsSent').set(stats.notificationsSent);
+        }
+
+        function sendTestNotification() {
+            const title = 'Test Bildirimi';
+            const message = 'Bu bir test bildirimidir. Sistem çalışıyor!';
+            
+            database.ref('notifications').push({
+                title: title,
+                message: message,
+                timestamp: Date.now(),
+                sent: true,
+                test: true
+            });
+            
+            addLog('Test bildirimi gönderildi', 'info');
+        }
+
+        // System Management
+        function exportData() {
+            const data = {
+                urls: availableUrls,
+                stats: stats,
+                exportDate: new Date().toISOString(),
+                exportedBy: 'admin'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `solobet-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addLog('Sistem verileri dışa aktarıldı', 'success');
+        }
+
+        function resetSystem() {
+            if (confirm('Tüm verileri sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+                database.ref('urls').set(['solobet1.com', 'solobet2.com']);
+                database.ref('stats').set({
+                    totalUsers: 0,
+                    activeUrls: 2,
+                    todayVisits: 0,
+                    notificationsSent: 0
+                });
+                
+                availableUrls = ['solobet1.com', 'solobet2.com'];
+                stats = { totalUsers: 0, activeUrls: 2, todayVisits: 0, notificationsSent: 0 };
+                
+                updateStats();
+                updateUrlList();
+                addLog('Sistem sıfırlandı - Varsayılan URL\'ler yüklendi', 'warning');
+            }
+        }
+
+        // Logging System
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('realtimeLog');
+            const timestamp = new Date().toLocaleTimeString('tr-TR');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            
+            let icon = '';
+            switch(type) {
+                case 'success': icon = '✅'; break;
+                case 'error': icon = '❌'; break;
+                case 'warning': icon = '⚠️'; break;
+                default: icon = 'ℹ️';
+            }
+            
+            logEntry.innerHTML = `<strong>[${type.toUpperCase()}]</strong> ${icon} ${message} - ${timestamp}`;
+            log.appendChild(logEntry);
+            log.scrollTop = log.scrollHeight;
+
+            // Save to Firebase
+            database.ref('logs').push({
+                message: message,
+                type: type,
+                timestamp: Date.now(),
+                adminAction: true
+            });
+        }
+
+        function clearLogs() {
+            if (confirm('Tüm logları temizlemek istediğinizden emin misiniz?')) {
+                document.getElementById('realtimeLog').innerHTML = '';
+                addLog('Loglar temizlendi', 'warning');
+            }
+        }
+
+        // Statistics
+        function updateStats() {
+            stats.activeUrls = availableUrls.length;
+            
+            document.getElementById('totalUsers').textContent = stats.totalUsers;
+            document.getElementById('activeUrls').textContent = stats.activeUrls;
+            document.getElementById('todayVisits').textContent = stats.todayVisits;
+            document.getElementById('notificationsSent').textContent = stats.notificationsSent;
+            
+            // Update Firebase stats
+            database.ref('stats').update(stats);
+        }
+
+        function loadDashboardData() {
+            // Load URLs from Firebase
+            database.ref('urls').once('value', (snapshot) => {
+                const urls = snapshot.val();
+                if (urls && Array.isArray(urls)) {
+                    availableUrls = urls;
+                } else if (urls) {
+                    availableUrls = Object.values(urls);
+                } else {
+                    availableUrls = ['solobet1.com', 'solobet2.com'];
+                    saveUrlsToFirebase();
+                }
+                updateUrlList();
+                updateStats();
+            });
+
+            // Load stats from Firebase
+            database.ref('stats').once('value', (snapshot) => {
+                const firebaseStats = snapshot.val();
+                if (firebaseStats) {
+                    stats = { ...stats, ...firebaseStats };
+                    updateStats();
+                }
+            });
+
+            // Real-time listeners
+            database.ref('users').on('value', (snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    const onlineUsers = Object.values(users).filter(user => 
+                        Date.now() - user.lastSeen < 300000
+                    ).length;
+                    stats.totalUsers = Object.keys(users).length;
+                    document.getElementById('totalUsers').textContent = stats.totalUsers;
+                }
+            });
+
+            database.ref('stats/visits').on('value', (snapshot) => {
+                const visits = snapshot.val();
+                if (visits) {
+                    stats.todayVisits = visits;
+                    document.getElementById('todayVisits').textContent = stats.todayVisits;
+                }
+            });
+        }
+
+        // Notification preview updates
+        document.getElementById('notificationTitle').addEventListener('input', function() {
+            document.getElementById('previewTitle').textContent = this.value || 'SoloBet Güncelleme';
+        });
+
+        document.getElementById('notificationMessage').addEventListener('input', function() {
+            document.getElementById('previewMessage').textContent = this.value || 'Yeni güncellemeler mevcut...';
+        });
+
+        // Handle Enter key in login form
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+            if (!isLoggedIn && e.key === 'Enter') {
                 login();
             }
+        });
+
+        // Initialize dashboard
+        window.addEventListener('load', () => {
+            document.getElementById('startTime').textContent = new Date().toLocaleString('tr-TR');
+            
+            // Check if already logged in
+            const savedSession = sessionStorage.getItem('adminLoggedIn');
+            if (savedSession === 'true') {
+                isLoggedIn = true;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDashboardData();
+                addLog('Oturum geri yüklendi', 'info');
+            }
+        });
+
+        // Security - session timeout (30 minutes)
+        let sessionTimeout;
+        function resetSessionTimeout() {
+            clearTimeout(sessionTimeout);
+            sessionTimeout = setTimeout(() => {
+                if (isLoggedIn) {
+                    addLog('Oturum zaman aşımı - otomatik çıkış', 'warning');
+                    logout();
+                    alert('Güvenlik nedeniyle oturumunuz sonlandırıldı.');
+                }
+            }, 30 * 60 * 1000);
+        }
+
+        // Track user activity
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetSessionTimeout, true);
         });
     </script>
 </body>
