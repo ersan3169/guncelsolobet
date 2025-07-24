@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SoloBet - Güncel Adres</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SoloBet">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
@@ -167,8 +174,267 @@
             background: #E74C3C;
         }
         
+        /* Özellik Kartları */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2C3E50;
+        }
+        
+        .feature-desc {
+            color: #7F8C8D;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Platform Desteği */
+        .platform-support {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .platform-title {
+            color: #FF6B35;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+        
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .platform-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-item:hover {
+            border-color: #FF6B35;
+            transform: translateY(-3px);
+        }
+        
+        .platform-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .platform-name {
+            font-weight: 700;
+            color: #2C3E50;
+            margin-bottom: 5px;
+        }
+        
+        .platform-desc {
+            font-size: 0.9rem;
+            color: #7F8C8D;
+            margin-bottom: 10px;
+        }
+        
+        .install-steps {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            text-align: left;
+        }
+        
+        .install-steps h5 {
+            color: #2C3E50;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .install-steps ol {
+            font-size: 0.8rem;
+            color: #34495E;
+            padding-left: 15px;
+        }
+        
+        .install-steps li {
+            margin-bottom: 3px;
+        }
+        
+        /* Bildirim Ayarları */
+        .notification-settings {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .notification-title {
+            color: #FF6B35;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .notification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-info h4 {
+            color: #2C3E50;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .notification-info p {
+            color: #7F8C8D;
+            font-size: 0.9rem;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #FF6B35;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* İstatistikler */
+        .stats-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .stats-title {
+            color: #FF6B35;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FF6B35;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #7F8C8D;
+            font-size: 0.9rem;
+        }
+        
         @media (max-width: 768px) {
             .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .notification-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .platforms {
                 grid-template-columns: 1fr;
             }
         }
@@ -206,10 +472,135 @@
                 </div>
             </div>
         </div>
+
+        <!-- Özellik Kartları -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <div class="feature-title">Otomatik Güncelleme</div>
+                <div class="feature-desc">Adresler otomatik kontrol edilir ve güncel olanına yönlendirilirsiniz</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <div class="feature-title">Anında Bildirim</div>
+                <div class="feature-desc">Yeni adres geldiğinde hemen haberdar olursunuz</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">Uygulama Gibi</div>
+                <div class="feature-desc">Ana ekrana ekleyince gerçek uygulama gibi çalışır</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-title">Güvenli Erişim</div>
+                <div class="feature-desc">Sadece güvenli ve aktif adreslere yönlendirilirsiniz</div>
+            </div>
+        </div>
+
+        <!-- Platform Desteği -->
+        <div class="platform-support">
+            <div class="platform-title">📱 Platform Desteği</div>
+            <div class="platforms">
+                <div class="platform-item">
+                    <div class="platform-icon">📱</div>
+                    <div class="platform-name">iOS (iPhone/iPad)</div>
+                    <div class="platform-desc">Safari tarayıcısı ile mükemmel çalışır</div>
+                    <div class="install-steps">
+                        <h5>📲 Ana Ekrana Ekleme:</h5>
+                        <ol>
+                            <li>Safari'de siteyi açın</li>
+                            <li>Alt menüden "Paylaş" butonuna tıklayın</li>
+                            <li>"Ana Ekrana Ekle" seçeneğini seçin</li>
+                            <li>"Ekle" butonuna tıklayın</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="platform-item">
+                    <div class="platform-icon">🤖</div>
+                    <div class="platform-name">Android</div>
+                    <div class="platform-desc">Chrome ve diğer tarayıcılarda desteklenir</div>
+                    <div class="install-steps">
+                        <h5>📲 Ana Ekrana Ekleme:</h5>
+                        <ol>
+                            <li>Chrome'da siteyi açın</li>
+                            <li>Sağ üst menüden "⋮" tıklayın</li>
+                            <li>"Ana ekrana ekle" seçeneğini seçin</li>
+                            <li>"Ekle" butonuna tıklayın</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="platform-item">
+                    <div class="platform-icon">📲</div>
+                    <div class="platform-name">Huawei</div>
+                    <div class="platform-desc">HMS destekli tarayıcılarda çalışır</div>
+                    <div class="install-steps">
+                        <h5>📲 Ana Ekrana Ekleme:</h5>
+                        <ol>
+                            <li>Huawei tarayıcıda siteyi açın</li>
+                            <li>Menü butonuna tıklayın</li>
+                            <li>"Ana ekrana ekle" seçin</li>
+                            <li>Uygulama adını onaylayın</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bildirim Ayarları -->
+        <div class="notification-settings">
+            <div class="notification-title">
+                🔔 Bildirim Ayarları
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-info">
+                    <h4>Adres Değişikliği Bildirimi</h4>
+                    <p>Yeni adres geldiğinde hemen haberdar olun</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="addressNotifications" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-info">
+                    <h4>Günlük Hatırlatma</h4>
+                    <p>Her gün güncel adresi kontrol edin</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dailyReminder">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- İstatistikler -->
+        <div class="stats-section">
+            <div class="stats-title">📊 Site İstatistikleri</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Toplam Kullanıcı</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="onlineUsers">0</div>
+                    <div class="stat-label">Online Kullanıcı</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalVisits">0</div>
+                    <div class="stat-label">Toplam Ziyaret</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="activeUrls">0</div>
+                    <div class="stat-label">Aktif URL</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-     <script>
-        // Firebase Configuration - BU KISMI DEĞİŞTİRİN
+    <script>
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAZMVzxhne-YlyJXUAejuVih0DkcWRUrys",
             authDomain: "solobet-web.firebaseapp.com",
@@ -219,7 +610,6 @@
             messagingSenderId: "906482566805",
             appId: "1:906482566805:web:6281cd46dde014b427fd9c"
         };
-
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -233,6 +623,7 @@
                 const data = snapshot.val();
                 urlsData = data ? data : [];
                 updateDisplay();
+                updateStats();
             });
         }
 
@@ -278,6 +669,50 @@
             }).join('');
         }
 
+        function updateStats() {
+            // URL istatistikleri
+            document.getElementById('activeUrls').textContent = urlsData.filter(url => url.status === 'active').length;
+
+            // Kullanıcı istatistikleri
+            const userId = generateUserId();
+            database.ref('users/' + userId).set({
+                lastSeen: Date.now(),
+                online: true
+            });
+
+            database.ref('users').on('value', (snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    const allUsers = Object.values(users);
+                    const onlineUsers = allUsers.filter(user => 
+                        Date.now() - user.lastSeen < 300000
+                    ).length;
+                    
+                    document.getElementById('totalUsers').textContent = allUsers.length;
+                    document.getElementById('onlineUsers').textContent = onlineUsers;
+                }
+            });
+
+            // Ziyaret istatistikleri
+            database.ref('stats/visits').transaction((currentVisits) => {
+                return (currentVisits || 0) + 1;
+            });
+
+            database.ref('stats/visits').on('value', (snapshot) => {
+                const visits = snapshot.val() || 0;
+                document.getElementById('totalVisits').textContent = visits;
+            });
+        }
+
+        function generateUserId() {
+            let userId = localStorage.getItem('solobetUserId');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('solobetUserId', userId);
+            }
+            return userId;
+        }
+
         function goToCurrentSite() {
             if (currentActiveUrl) {
                 window.open(`https://${currentActiveUrl}`, '_blank');
@@ -286,8 +721,39 @@
             }
         }
 
+        // Notification settings persistence
+        function saveNotificationSettings() {
+            const settings = {
+                addressNotifications: document.getElementById('addressNotifications').checked,
+                dailyReminder: document.getElementById('dailyReminder').checked
+            };
+            localStorage.setItem('solobetNotificationSettings', JSON.stringify(settings));
+        }
+
+        function loadNotificationSettings() {
+            const settings = JSON.parse(localStorage.getItem('solobetNotificationSettings') || '{}');
+            if (settings.addressNotifications !== undefined) {
+                document.getElementById('addressNotifications').checked = settings.addressNotifications;
+            }
+            if (settings.dailyReminder !== undefined) {
+                document.getElementById('dailyReminder').checked = settings.dailyReminder;
+            }
+        }
+
+        // Event listeners for notification settings
+        document.getElementById('addressNotifications').addEventListener('change', saveNotificationSettings);
+        document.getElementById('dailyReminder').addEventListener('change', saveNotificationSettings);
+
+        // Initialize
         window.addEventListener('load', () => {
             loadUrls();
+            loadNotificationSettings();
+            updateStats();
+
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
         });
     </script>
 </body>
