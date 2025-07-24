@@ -7,9 +7,9 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF6B35">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SoloBet">
+    <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
@@ -139,6 +139,88 @@
             box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
         }
         
+        .next-urls {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .url-queue {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .queue-item:hover {
+            transform: translateX(5px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .queue-url {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .queue-url::before {
+            content: "▶";
+            margin-right: 10px;
+            color: #FF9500;
+            font-size: 0.8rem;
+        }
+
+        .queue-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid transparent;
+        }
+
+        .queue-status.active {
+            background: #28a745;
+            color: white;
+            border-color: #1e7e34;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+
+        .queue-status.next {
+            background: #ffc107;
+            color: #333;
+            border-color: #e0a800;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        .queue-status.inactive {
+            background: #dc3545;
+            color: white;
+            border-color: #bd2130;
+        }
+
+        .queue-status.loading {
+            background: #17a2b8;
+            color: white;
+            border-color: #138496;
+        }
+        
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -266,6 +348,12 @@
             .status-card, .notification-settings {
                 padding: 20px;
             }
+            
+            .queue-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -300,6 +388,17 @@
                 <button class="main-button" onclick="goToSite()">
                     🚀 SoloBet'e Git
                 </button>
+            </div>
+            
+            <!-- Sıradaki Adresler -->
+            <div class="next-urls">
+                <h3 style="color: #28a745; margin-bottom: 20px; text-align: center;">📋 Sıradaki Adresler</h3>
+                <div class="url-queue" id="urlQueue">
+                    <div class="queue-item">
+                        <span class="queue-url">Yükleniyor...</span>
+                        <span class="queue-status loading">Kontrol ediliyor</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -394,6 +493,7 @@
                 if (urls && Array.isArray(urls) && urls.length > 0) {
                     availableUrls = urls;
                     updateCurrentUrl();
+                    updateUrlQueue();
                 }
             });
         }
@@ -440,6 +540,46 @@
                         updateCurrentUrl();
                     }, 2000);
                 }
+            });
+            
+            updateUrlQueue();
+        }
+
+        function updateUrlQueue() {
+            const queueContainer = document.getElementById('urlQueue');
+            queueContainer.innerHTML = '';
+            
+            if (availableUrls.length === 0) {
+                queueContainer.innerHTML = '<div class="queue-item"><span class="queue-url">Henüz adres eklenmemiş</span><span class="queue-status loading">Bekleniyor</span></div>';
+                return;
+            }
+            
+            availableUrls.forEach((url, index) => {
+                const queueItem = document.createElement('div');
+                queueItem.className = 'queue-item';
+                
+                let status = '';
+                let statusClass = '';
+                
+                if (index === currentUrlIndex) {
+                    status = 'Aktif';
+                    statusClass = 'active';
+                } else if (index === (currentUrlIndex + 1) % availableUrls.length) {
+                    status = 'Sıradaki';
+                    statusClass = 'next';
+                } else {
+                    // Random status check
+                    const isWorking = Math.random() > 0.4;
+                    status = isWorking ? 'Aktif' : 'Pasif';
+                    statusClass = isWorking ? 'active' : 'inactive';
+                }
+                
+                queueItem.innerHTML = `
+                    <span class="queue-url">${url}</span>
+                    <span class="queue-status ${statusClass}">${status}</span>
+                `;
+                
+                queueContainer.appendChild(queueItem);
             });
         }
 
@@ -563,15 +703,15 @@
         // Initialize app
         window.addEventListener('load', () => {
             // Request notification permission
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        console.log('Bildirim izni:', permission);
+                    });
+                }
+                console.log('Mevcut bildirim izni:', Notification.permission);
             }
-// Bildirim test
-setTimeout(() => {
-    if (Notification.permission === 'granted') {
-        new Notification('Test', { body: 'Bildirim sistemi çalışıyor!' });
-    }
-}, 3000);
+
             // Load saved settings
             const settings = JSON.parse(localStorage.getItem('solobetSettings') || '{}');
             if (settings.addressNotifications !== undefined) {
@@ -602,6 +742,13 @@ setTimeout(() => {
                     updateTimestamps();
                 }
             }, 5 * 60 * 1000);
+
+            // Bildirim test
+            setTimeout(() => {
+                if (Notification.permission === 'granted') {
+                    new Notification('Test', { body: 'Bildirim sistemi çalışıyor!' });
+                }
+            }, 3000);
 
             // Analytics page view
             gtag('event', 'page_view', {
