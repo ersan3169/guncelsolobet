@@ -53,10 +53,12 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
         
         .logout-btn:hover {
             background: #C0392B;
+            transform: translateY(-2px);
         }
         
         /* Login Ekranı */
@@ -162,6 +164,11 @@
             color: #2C3E50;
         }
         
+        .btn-primary {
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+        }
+        
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -174,15 +181,6 @@
             background: #FADBD8;
             border-radius: 5px;
             display: none;
-        }
-        
-        .credentials-info {
-            background: #E8F4FD;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            color: #2C3E50;
         }
         
         /* Admin Panel */
@@ -228,6 +226,12 @@
             border-radius: 10px;
             margin-bottom: 10px;
             background: #F8F9FA;
+            transition: all 0.3s ease;
+        }
+        
+        .url-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .url-info {
@@ -258,6 +262,7 @@
             background: #27AE60;
             color: white;
             box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+            animation: pulse-active 2s infinite;
         }
         
         .status-next {
@@ -268,6 +273,12 @@
         .status-inactive {
             background: #E74C3C;
             color: white;
+        }
+        
+        @keyframes pulse-active {
+            0% { box-shadow: 0 0 10px rgba(39, 174, 96, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(39, 174, 96, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(39, 174, 96, 0.5); }
         }
         
         .url-actions {
@@ -294,6 +305,11 @@
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
         
         .stat-number {
@@ -454,7 +470,7 @@
                     <button class="action-btn btn-success" onclick="activateNextUrl()">
                         🔄 Sıradaki URL'yi Aktif Et
                     </button>
-                    <button class="action-btn btn-warning" onclick="sendTestNotification()">
+                    <button class="action-btn btn-primary" onclick="sendTestNotification()">
                         📤 Test Bildirimi Gönder
                     </button>
                     <button class="action-btn btn-danger" onclick="deactivateAllUrls()">
@@ -474,7 +490,7 @@
                     <form id="addUrlForm">
                         <div class="form-group">
                             <label class="form-label">URL Adresi</label>
-                            <input type="text" class="form-input" id="newUrl" placeholder="örn: sahabet1234.com" required>
+                            <input type="text" class="form-input" id="newUrl" placeholder="örn: solobet1234.com" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Durum</label>
@@ -522,7 +538,7 @@
                             <label class="form-label">Mesaj</label>
                             <input type="text" class="form-input" id="notifMessage" placeholder="Bildirim mesajı">
                         </div>
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-primary">
                             📤 Gönder
                         </button>
                     </form>
@@ -549,9 +565,9 @@
 
         let urlsData = [];
 
-        // Basit giriş kontrolü
+        // Login credentials
         const validCredentials = {
-            'admin': 'admin3169'
+            'admin': 'SoloBet2024!Admin#3169'
         };
 
         // Login form
@@ -561,12 +577,16 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             
+            console.log('Login attempt:', username); // Debug log
+            
             if (validCredentials[username] && validCredentials[username] === password) {
+                console.log('Login successful');
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 sessionStorage.setItem('adminLoggedIn', 'true');
                 loadUrls();
             } else {
+                console.log('Login failed');
                 document.getElementById('errorMessage').style.display = 'block';
                 setTimeout(() => {
                     document.getElementById('errorMessage').style.display = 'none';
@@ -595,9 +615,11 @@
 
         // Load URLs from Firebase
         function loadUrls() {
+            console.log('Loading URLs from Firebase...');
             database.ref('urlsData').on('value', (snapshot) => {
                 const data = snapshot.val();
                 urlsData = data ? data : [];
+                console.log('URLs loaded:', urlsData);
                 renderUrlList();
                 updateStats();
             });
@@ -674,6 +696,7 @@
                 document.getElementById('addUrlForm').reset();
                 document.getElementById('newOrder').value = urlsData.length + 1;
             } catch (error) {
+                console.error('URL adding error:', error);
                 showAlert('addAlert', 'Hata: ' + error.message, 'error');
             }
         });
@@ -720,29 +743,44 @@
         }
 
         async function sendTestNotification() {
-            // Önce tarayıcı bildirimi göster
-            if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('🎉 SoloBet Test', {
-                    body: 'Admin panelden test bildirimi başarılı!',
-                    icon: '/favicon.ico',
-                    tag: 'solobet-admin-test'
-                });
-            } else if ('Notification' in window) {
-                // İzin yoksa iste
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        new Notification('🎉 SoloBet Test', {
-                            body: 'Admin panelden test bildirimi başarılı!',
+            console.log('Sending test notification...');
+            
+            // Browser notification attempt
+            if ('Notification' in window) {
+                if (Notification.permission === 'granted') {
+                    try {
+                        new Notification('🎉 SoloBet Admin', {
+                            body: 'Test bildirimi başarıyla gönderildi!',
                             icon: '/favicon.ico',
                             tag: 'solobet-admin-test'
                         });
+                        console.log('Notification displayed successfully');
+                    } catch (error) {
+                        console.error('Notification error:', error);
                     }
-                });
+                } else if (Notification.permission !== 'denied') {
+                    try {
+                        const permission = await Notification.requestPermission();
+                        if (permission === 'granted') {
+                            new Notification('🎉 SoloBet Admin', {
+                                body: 'Test bildirimi başarıyla gönderildi!',
+                                icon: '/favicon.ico',
+                                tag: 'solobet-admin-test'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Permission request error:', error);
+                    }
+                } else {
+                    console.log('Notification permission denied');
+                }
+            } else {
+                console.log('Notifications not supported');
             }
             
-            // Sonra Firebase'e kaydet
+            // Firebase notification
             const notification = {
-                title: 'SoloBet Test',
+                title: 'SoloBet Admin Test',
                 message: 'Admin panelden gönderilen test bildirimi.',
                 timestamp: Date.now(),
                 sent: true
@@ -750,8 +788,10 @@
 
             try {
                 await database.ref('notifications').push(notification);
-                showAlert('notifAlert', 'Test bildirimi gönderildi ve görüntülendi!', 'success');
+                showAlert('notifAlert', 'Test bildirimi gönderildi!', 'success');
+                console.log('Firebase notification saved');
             } catch (error) {
+                console.error('Firebase notification error:', error);
                 showAlert('notifAlert', 'Hata: ' + error.message, 'error');
             }
         }
@@ -780,6 +820,7 @@
                 await database.ref('urlsData').set(urlsData);
                 showAlert('listAlert', 'URL durumu güncellendi!', 'success');
             } catch (error) {
+                console.error('URL update error:', error);
                 showAlert('listAlert', 'Hata: ' + error.message, 'error');
             }
         }
@@ -796,6 +837,7 @@
                 await database.ref('urlsData').set(urlsData);
                 showAlert('listAlert', 'URL başarıyla silindi!', 'success');
             } catch (error) {
+                console.error('URL delete error:', error);
                 showAlert('listAlert', 'Hata: ' + error.message, 'error');
             }
         }
@@ -824,6 +866,7 @@
                 showAlert('notifAlert', 'Bildirim başarıyla gönderildi!', 'success');
                 document.getElementById('notificationForm').reset();
             } catch (error) {
+                console.error('Notification send error:', error);
                 showAlert('notifAlert', 'Hata: ' + error.message, 'error');
             }
         });
@@ -851,10 +894,14 @@
 
         // Initialize
         window.addEventListener('load', () => {
+            console.log('Admin panel loading...');
             if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                console.log('Auto-login detected');
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 loadUrls();
+            } else {
+                console.log('Login required');
             }
         });
     </script>
