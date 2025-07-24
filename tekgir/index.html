@@ -8,6 +8,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     
     <style>
         * {
@@ -20,9 +21,46 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             min-height: 100vh;
+            color: #333;
         }
         
-        /* Login Ekranı Stilleri */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #2C3E50;
+            font-size: 2rem;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #E74C3C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            background: #C0392B;
+        }
+        
+        /* Login Ekranı */
         .login-container {
             display: flex;
             justify-content: center;
@@ -64,127 +102,6 @@
             color: #34495E;
         }
         
-        .form-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #E8E8E8;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #3498DB;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-        
-        .btn-login {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #3498DB, #2980B9);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
-        }
-        
-        .error-message {
-            color: #E74C3C;
-            margin-top: 15px;
-            padding: 10px;
-            background: #FADBD8;
-            border-radius: 5px;
-            display: none;
-        }
-        
-        /* Admin Panel Stilleri */
-        .admin-panel {
-            display: none;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            min-height: 100vh;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .header h1 {
-            color: #2C3E50;
-            font-size: 2rem;
-        }
-        
-        .logout-btn {
-            padding: 10px 20px;
-            background: #E74C3C;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .logout-btn:hover {
-            background: #C0392B;
-        }
-        
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .panel-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #2C3E50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #34495E;
-        }
-        
         .form-input, .form-select {
             width: 100%;
             padding: 12px 15px;
@@ -213,6 +130,29 @@
             gap: 8px;
         }
         
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+        }
+        
         .btn-success {
             background: linear-gradient(135deg, #27AE60, #2ECC71);
             color: white;
@@ -233,6 +173,53 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
+        .error-message {
+            color: #E74C3C;
+            margin-top: 15px;
+            padding: 10px;
+            background: #FADBD8;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .credentials-info {
+            background: #E8F4FD;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #2C3E50;
+        }
+        
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2C3E50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
         .url-list {
             max-height: 400px;
             overflow-y: auto;
@@ -247,6 +234,7 @@
             border-radius: 10px;
             margin-bottom: 10px;
             background: #F8F9FA;
+            position: relative;
         }
         
         .url-info {
@@ -276,6 +264,7 @@
         .status-active {
             background: #27AE60;
             color: white;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
         }
         
         .status-next {
@@ -299,6 +288,33 @@
             min-width: 60px;
         }
         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2C3E50;
+        }
+        
+        .stat-label {
+            color: #7F8C8D;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -318,13 +334,72 @@
             border: 1px solid #F5C6CB;
         }
         
-        .credentials-info {
-            background: #E8F4FD;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            color: #2C3E50;
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Bildirim Paneli */
+        .notification-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .notification-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        /* Drag & Drop */
+        .url-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        
+        .drag-handle {
+            cursor: move;
+            color: #BDC3C7;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .drag-handle:hover {
+            color: #7F8C8D;
         }
         
         @media (max-width: 768px) {
@@ -346,6 +421,14 @@
             
             .url-actions {
                 justify-content: center;
+            }
+            
+            .notification-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -394,6 +477,45 @@
                 </button>
             </div>
 
+            <!-- İstatistikler -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUrls">0</div>
+                    <div class="stat-label">Toplam URL</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeUrls">0</div>
+                    <div class="stat-label">Aktif URL</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Online Kullanıcı</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVisits">0</div>
+                    <div class="stat-label">Toplam Ziyaret</div>
+                </div>
+            </div>
+
+            <!-- Hızlı Aksiyonlar -->
+            <div class="quick-actions">
+                <h3 class="card-title">⚡ Hızlı Aksiyonlar</h3>
+                <div class="action-buttons">
+                    <button class="action-btn btn-success" onclick="showAddUrlModal()">
+                        ➕ Yeni URL Ekle
+                    </button>
+                    <button class="action-btn btn-warning" onclick="activateNextUrl()">
+                        🔄 Sıradaki URL'yi Aktif Et
+                    </button>
+                    <button class="action-btn btn-primary" onclick="sendTestNotification()">
+                        📤 Test Bildirimi Gönder
+                    </button>
+                    <button class="action-btn btn-danger" onclick="deactivateAllUrls()">
+                        ⛔ Tüm URL'leri Pasif Et
+                    </button>
+                </div>
+            </div>
+
             <!-- Ana Panel -->
             <div class="admin-grid">
                 <!-- URL Ekleme -->
@@ -437,6 +559,27 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Bildirim Gönderme -->
+                <div class="panel-card">
+                    <h3 class="card-title">
+                        🔔 Bildirim Gönder
+                    </h3>
+                    <div id="notifAlert" class="alert"></div>
+                    <form id="notificationForm">
+                        <div class="form-group">
+                            <label class="form-label">Başlık</label>
+                            <input type="text" class="form-input" id="notifTitle" placeholder="Bildirim başlığı">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mesaj</label>
+                            <input type="text" class="form-input" id="notifMessage" placeholder="Bildirim mesajı">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            📤 Gönder
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -473,16 +616,12 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             
-            console.log('Giriş deneniyor:', username, password); // Debug için
-            
             if (validCredentials[username] && validCredentials[username] === password) {
-                console.log('Giriş başarılı!'); // Debug için
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 sessionStorage.setItem('adminLoggedIn', 'true');
-                loadUrls(); // Firebase verilerini yükle
+                loadUrls();
             } else {
-                console.log('Giriş başarısız!'); // Debug için
                 document.getElementById('errorMessage').style.display = 'block';
                 setTimeout(() => {
                     document.getElementById('errorMessage').style.display = 'none';
@@ -515,6 +654,7 @@
                 const data = snapshot.val();
                 urlsData = data ? data : [];
                 renderUrlList();
+                updateStats();
             });
         }
 
@@ -530,7 +670,8 @@
             const sortedUrls = [...urlsData].sort((a, b) => a.order - b.order);
             
             container.innerHTML = sortedUrls.map((url, index) => `
-                <div class="url-item">
+                <div class="url-item" data-id="${index}">
+                    <div class="drag-handle">⋮⋮</div>
                     <div class="url-info">
                         <div class="url-text">${url.url}</div>
                         <div class="url-order">Sıra: ${url.order}</div>
@@ -539,7 +680,9 @@
                         ${url.status === 'active' ? 'Aktif' : url.status === 'next' ? 'Sıradaki' : 'Pasif'}
                     </div>
                     <div class="url-actions">
-                        <button class="btn btn-warning btn-small" onclick="editUrl(${index})">✏️</button>
+                        <button class="btn btn-success btn-small" onclick="setUrlActive(${index})">🟢</button>
+                        <button class="btn btn-warning btn-small" onclick="setUrlNext(${index})">🟡</button>
+                        <button class="btn btn-danger btn-small" onclick="setUrlInactive(${index})">🔴</button>
                         <button class="btn btn-danger btn-small" onclick="deleteUrl(${index})">🗑️</button>
                     </div>
                 </div>
@@ -591,6 +734,93 @@
             }
         });
 
+        // Quick Actions
+        async function activateNextUrl() {
+            const nextUrl = urlsData.find(url => url.status === 'next');
+            if (!nextUrl) {
+                alert('Sıradaki URL bulunamadı!');
+                return;
+            }
+
+            // Mevcut aktif URL'yi pasif yap
+            urlsData.forEach(item => {
+                if (item.status === 'active') {
+                    item.status = 'inactive';
+                }
+            });
+
+            // Sıradaki URL'yi aktif yap
+            nextUrl.status = 'active';
+
+            try {
+                await database.ref('urlsData').set(urlsData);
+                showAlert('listAlert', 'Sıradaki URL aktif edildi!', 'success');
+            } catch (error) {
+                showAlert('listAlert', 'Hata: ' + error.message, 'error');
+            }
+        }
+
+        async function deactivateAllUrls() {
+            if (!confirm('Tüm URL\'leri pasif etmek istediğinizden emin misiniz?')) {
+                return;
+            }
+
+            urlsData.forEach(item => {
+                item.status = 'inactive';
+            });
+
+            try {
+                await database.ref('urlsData').set(urlsData);
+                showAlert('listAlert', 'Tüm URL\'ler pasif edildi!', 'success');
+            } catch (error) {
+                showAlert('listAlert', 'Hata: ' + error.message, 'error');
+            }
+        }
+
+        async function sendTestNotification() {
+            const notification = {
+                title: 'Test Bildirimi',
+                message: 'Admin panelden gönderilen test bildirimi.',
+                timestamp: Date.now(),
+                sent: true
+            };
+
+            try {
+                await database.ref('notifications').push(notification);
+                showAlert('notifAlert', 'Test bildirimi gönderildi!', 'success');
+            } catch (error) {
+                showAlert('notifAlert', 'Hata: ' + error.message, 'error');
+            }
+        }
+
+        // URL Status Functions
+        async function setUrlActive(index) {
+            urlsData.forEach(item => {
+                item.status = 'inactive';
+            });
+            urlsData[index].status = 'active';
+            await updateUrlsData();
+        }
+
+        async function setUrlNext(index) {
+            urlsData[index].status = 'next';
+            await updateUrlsData();
+        }
+
+        async function setUrlInactive(index) {
+            urlsData[index].status = 'inactive';
+            await updateUrlsData();
+        }
+
+        async function updateUrlsData() {
+            try {
+                await database.ref('urlsData').set(urlsData);
+                showAlert('listAlert', 'URL durumu güncellendi!', 'success');
+            } catch (error) {
+                showAlert('listAlert', 'Hata: ' + error.message, 'error');
+            }
+        }
+
         // Delete URL
         async function deleteUrl(index) {
             if (!confirm('Bu URL\'yi silmek istediğinizden emin misiniz?')) {
@@ -607,32 +837,57 @@
             }
         }
 
-        // Edit URL
-        function editUrl(index) {
-            const url = urlsData[index];
-            const newStatus = prompt('Yeni durum seçin:\nactive - Aktif\nnext - Sıradaki\ninactive - Pasif', url.status);
+        // Send notification
+        document.getElementById('notificationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            if (newStatus && ['active', 'next', 'inactive'].includes(newStatus)) {
-                if (newStatus === 'active') {
-                    urlsData.forEach(item => {
-                        if (item.status === 'active') {
-                            item.status = 'inactive';
-                        }
-                    });
-                }
-                
-                urlsData[index].status = newStatus;
-                
-                database.ref('urlsData').set(urlsData).then(() => {
-                    showAlert('listAlert', 'URL durumu güncellendi!', 'success');
-                }).catch(error => {
-                    showAlert('listAlert', 'Hata: ' + error.message, 'error');
-                });
+            const title = document.getElementById('notifTitle').value.trim();
+            const message = document.getElementById('notifMessage').value.trim();
+
+            if (!title || !message) {
+                showAlert('notifAlert', 'Başlık ve mesaj gerekli!', 'error');
+                return;
             }
+
+            const notification = {
+                title: title,
+                message: message,
+                timestamp: Date.now(),
+                sent: true
+            };
+
+            try {
+                await database.ref('notifications').push(notification);
+                showAlert('notifAlert', 'Bildirim başarıyla gönderildi!', 'success');
+                document.getElementById('notificationForm').reset();
+            } catch (error) {
+                showAlert('notifAlert', 'Hata: ' + error.message, 'error');
+            }
+        });
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalUrls').textContent = urlsData.length;
+            document.getElementById('activeUrls').textContent = urlsData.filter(url => url.status === 'active').length;
+
+            database.ref('users').once('value', (snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    const onlineUsers = Object.values(users).filter(user => 
+                        Date.now() - user.lastSeen < 300000
+                    ).length;
+                    document.getElementById('totalUsers').textContent = onlineUsers;
+                }
+            });
+
+            database.ref('stats/visits').once('value', (snapshot) => {
+                const visits = snapshot.val() || 0;
+                document.getElementById('totalVisits').textContent = visits;
+            });
         }
 
-        // Sayfa yüklendiğinde session kontrolü
-        window.addEventListener('load', function() {
+        // Initialize
+        window.addEventListener('load', () => {
             if (sessionStorage.getItem('adminLoggedIn') === 'true') {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
